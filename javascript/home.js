@@ -1,11 +1,12 @@
 const username = localStorage.getItem('loggedInUser');
 if (username) {
-    // Hiển thị username trong thẻ h1
-    document.getElementById('welcomeMessage').textContent = `Welcome, ${username}!`;
+    // Hiển thị username trong dropdown
+    document.getElementById('dropdownUsername').textContent = `Welcome, ${username}`;
 } else {
     // Nếu không có username trong local storage, chuyển hướng về trang đăng nhập
     window.location.href = 'login.html';
 }
+
 
 document.getElementById('logoutButton').addEventListener('click', function () {
     // Xóa username khỏi local storage
@@ -58,3 +59,38 @@ const myChart = new Chart(ctx, {
         }
     }
 });
+
+// Thêm vào file JavaScript hiện có
+
+// Xử lý chuyển đổi theme
+const themeToggle = document.getElementById('themeToggle');
+const body = document.body;
+
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    updateThemeIcon();
+    saveThemePreference();
+});
+
+function updateThemeIcon() {
+    const icon = themeToggle.querySelector('i');
+    if (body.classList.contains('dark-mode')) {
+        icon.classList.replace('fa-moon', 'fa-sun');
+    } else {
+        icon.classList.replace('fa-sun', 'fa-moon');
+    }
+}
+
+function saveThemePreference() {
+    const isDarkMode = body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode);
+}
+
+// Kiểm tra và áp dụng theme đã lưu
+const savedTheme = localStorage.getItem('darkMode');
+if (savedTheme === 'true') {
+    body.classList.add('dark-mode');
+    updateThemeIcon();
+}
+
+// ... existing code ...

@@ -16,6 +16,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+
+
 document.getElementById("showPassword").addEventListener('change', function () {
     const passwordField = document.getElementById("password");
     const type = this.checked ? 'text' : 'password';

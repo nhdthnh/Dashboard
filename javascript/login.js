@@ -53,3 +53,39 @@ document.querySelector('button[type="submit"]').addEventListener('click', functi
         alert("Error during login. Please try again.");
     });
 });
+
+// Handle login
+document.querySelector('button[type="submit"]').addEventListener('click', function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const userRef = ref(db, 'user/' + username);
+    get(userRef).then((snapshot) => {
+        // ... existing code ...
+    }).catch((error) => {
+        console.error("Error reading data: ", error);
+        // Hiển thị thông tin lỗi chi tiết hơn
+        alert("Error during login. Please try again. Error details: " + error.message);
+    });
+});
+
+// Thêm đoạn mã sau để kiểm tra kết nối Firebase
+const connectedRef = ref(db, ".info/connected");
+onValue(connectedRef, (snap) => {
+  if (snap.val() === true) {
+    console.log("Connected to Firebase");
+  } else {
+    console.log("Not connected to Firebase");
+  }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const usernameLink = document.getElementById('usernameLink');
+    
+    usernameLink.addEventListener('click', function(e) {
+        e.preventDefault(); // Ngăn chặn hành vi mặc định của thẻ a
+        window.location.href = 'edit-profile.html'; // Chuyển hướng đến trang edit profile
+    });
+});
