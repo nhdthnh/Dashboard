@@ -55,7 +55,7 @@ header {
 
 .widget p {
     margin: 0;
-    font-size: 16px;
+    font-size: 1em; /* Tăng kích thước font */
     color: #333;
     transition: color 0.3s;
 }
@@ -81,6 +81,7 @@ canvas {
 
 .chart-container {
     width: 80%;
+    height: 400px;
     margin: auto;
 }
 
@@ -202,6 +203,12 @@ body.dark-mode .logout-button:hover {
     background-color: #0056b3;
 }
 
+body.dark-mode .location-container select {
+    background-color: #444; /* Màu nền cho dark mode */
+    color: #f0f0f0; /* Màu chữ cho dark mode */
+    border-color: #555; /* Màu viền cho dark mode */
+}
+
 /* Media query for responsive design */
 @media (max-width: 767px) {
     .container {
@@ -227,3 +234,15 @@ body.dark-mode .logout-button:hover {
         width: 90%;
     }
 }
+
+.location-container select {
+    font-size: 1em; /* Tăng kích thước font cho select */
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid #dee2e6;
+    margin-left: 30px;
+    background-color: #f8f9fa;
+}
+
+
+
