@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="font/fontawesome-free-6.6.0-web/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 </head>
 
 <body>
@@ -28,6 +32,9 @@
                 </div>
             </div>
         </div>
+        <div class="datetime-container">
+            <span id="currentDateTime"></span>
+        </div>
     </header>
     <div class="location-container">
         <select id="locationSelect">
@@ -45,31 +52,35 @@
         <div class="main-widget">
             <h3>Current Conditions</h3>
             <div class="widget">
-                <p>Temperature:<br> <span id="temperature">-5.6°C</span></p>
+                <p>Temperature:<br> <span id="temperature">27°C</span></p>
             </div>
             <div class="widget">
                 <p>Humidity:<br> <span id="humidity">53.8%</span></p>
             </div>
             <div class="widget">
-                <p>Battery:<br> <span id="battery">32.4%</span></p>
+                <p>Air Quality:<br> <span id="battery">32.4%</span></p>
             </div>
             <div class="widget">
-                <p>Luminosity:<br> <span id="luminosity">455 lux</span></p>
+                <p>Flame:<br> <span id="luminosity">No</span></p>
             </div>
         </div>
         <div class="main-widget">
-            <h3>Current Conditions</h3>
-            <div class="widget">
-                <p>Temperature: <span id="temperature">-5.6°C</span></p>
+            <h3>Device Controls</h3>
+            <div class="widget" id="widget1" data-device-number="1">
+                <p>Device 1</p>
+                <button class="switch" id="device1"></button>
             </div>
-            <div class="widget">
-                <p>Humidity: <span id="humidity">53.8%</span></p>
+            <div class="widget" id="widget2" data-device-number="2">
+                <p>Device 2</p>
+                <button class="switch" id="device2"></button>
             </div>
-            <div class="widget">
-                <p>Battery: <span id="battery">32.4%</span></p>
+            <div class="widget" id="widget3" data-device-number="3">
+                <p>Device 3</p>
+                <button class="switch" id="device3"></button>
             </div>
-            <div class="widget">
-                <p>Luminosity: <span id="luminosity">455 lux</span></p>
+            <div class="widget" id="widget4" data-device-number="4">
+                <p>Device 4</p>
+                <button class="switch" id="device4"></button>
             </div>
         </div>
         <div class="main-widget">
@@ -96,6 +107,6 @@
         </div>
     </div>
 </body>
-<script src="javascript/home.js"></script>
+<script type="module" src="javascript/home.js"></script>
 
 </html>

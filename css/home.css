@@ -15,6 +15,7 @@ header {
     justify-content: flex-end;
     align-items: center;
     transition: background-color 0.3s;
+    height: 50px;
 }
 
 .container {
@@ -32,6 +33,7 @@ header {
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     width: 90%;
+    height: 90%;
     text-align: center;
     display: flex;
     flex-wrap: wrap;
@@ -50,7 +52,7 @@ header {
     align-items: center;
     width: 40%;
     box-sizing: border-box;
-    transition: background-color 0.3s, border-color 0.3s;
+    transition: background-color 0.3s, border-color .3s;
 }
 
 .widget p {
@@ -80,9 +82,41 @@ canvas {
 }
 
 .chart-container {
-    width: 80%;
-    height: 400px;
-    margin: auto;
+    position: relative;
+    height: 400px; /* Điều chỉnh chiều cao nếu cần */
+    width: 100%;
+}
+
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 12px; /* Thu nhỏ kích thước font */
+}
+
+.chart-legend-item {
+    display: flex;
+    align-items: center;
+    margin: 0 10px 5px 0;
+}
+
+.chart-legend-color {
+    width: 12px;
+    height: 12px;
+    margin-right: 5px;
+    border-radius: 50%;
+}
+
+@media screen and (max-width: 600px) {
+    .chart-legend {
+        font-size: 10px; /* Thu nhỏ hơn nữa trên màn hình nhỏ */
+    }
+    .chart-legend-color {
+        width: 10px;
+        height: 10px;
+    }
 }
 
 .header-controls {
@@ -208,33 +242,6 @@ body.dark-mode .location-container select {
     color: #f0f0f0; /* Màu chữ cho dark mode */
     border-color: #555; /* Màu viền cho dark mode */
 }
-
-/* Media query for responsive design */
-@media (max-width: 767px) {
-    .container {
-        grid-template-columns: 1fr;
-        grid-gap: 10px;
-    }
-
-    .widget {
-        width: 90%;
-        padding: 10px;
-        margin-bottom: 10px;
-    }
-
-    h3 {
-        font-size: 18px;
-    }
-
-    canvas {
-        height: 300px;
-    }
-
-    .chart-container {
-        width: 90%;
-    }
-}
-
 .location-container select {
     font-size: 1em; /* Tăng kích thước font cho select */
     padding: 16px;
@@ -245,4 +252,116 @@ body.dark-mode .location-container select {
 }
 
 
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    background-color: #ccc;
+    border-radius: 34px;
+    transition: background-color 0.3s;
+    border: none; /* Bỏ viền đen */
+}
+
+.switch::before {
+    content: '';
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Thêm bóng cho nút tròn */
+}
+
+.switch.on {
+    background-color: #4CAF50;
+}
+
+.switch.on::before {
+    transform: translateX(26px);
+}
+
+/* Responsive styles for mobile phones */
+@media screen and (max-width: 767px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .widget {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .main-widget {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chart-container {
+        height: 300px; /* Tăng chiều cao cho mobile */
+        width: 100%;
+        overflow-x: auto; /* Cho phép cuộn ngang nếu cần */
+    }
+
+    /* Make sure all widgets stack vertically */
+    .widget, .main-widget > div {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    /* Adjust the layout for Current Conditions and Device Controls */
+    .current-conditions, .device-controls {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .current-conditions > div, .device-controls > div {
+        width: 48%; /* Adjust as needed */
+        margin-bottom: 10px;
+    }
+
+    /* Ensure the chart is responsive */
+    canvas {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Adjust location selector */
+    .location-container {
+        width: 50%;
+        margin-bottom: 15px;
+    }
+
+    .location-container select {
+        width: 100%;
+    }
+}
+
+/* For very small screens */
+@media screen and (max-width: 375px) {
+    .current-conditions > div, .device-controls > div {
+        width: 100%;
+    }
+    .location-container {
+        width: 50%;
+        margin-bottom: 15px;
+    }
+
+    .location-container select {
+        width: 100%;
+    }
+}
+
+.datetime-container{
+    position: absolute;
+    top: 15px;
+    left: 20px;   
+    font-size: 1.3rem;
+}
 
