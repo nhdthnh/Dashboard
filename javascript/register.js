@@ -47,13 +47,35 @@ document.getElementById("submit").addEventListener('click', function (e) {
                 const data = childSnapshot.val();
                 if (data.username === username) {
                     exists = true;
-                    alert("Username already exists.");
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "Username already exists.",
+                        showConfirmButton: false,
+                        timer: 1500,
+                        toast: true // Enable toast notification
+                      });
+                      
                 } else if (data.email === email) {
                     exists = true;
-                    alert("Email already exists.");
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "Email already exists.",
+                        showConfirmButton: false,
+                        timer: 1500,
+                        toast: true // Enable toast notification
+                      });
                 } else if (data.phoneNumber === phoneNumber) {
                     exists = true;
-                    alert("Phone number already exists.");
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "Phone number exists.",
+                        showConfirmButton: false,
+                        timer: 1500,
+                        toast: true // Enable toast notification
+                      });
                 }
             });
 
@@ -67,8 +89,16 @@ document.getElementById("submit").addEventListener('click', function (e) {
                     password: encryptedPassword  // Lưu mật khẩu đã mã hóa
                 }).then(() => {
                     // Thông báo đăng ký thành công và chuyển hướng đến trang login
-                    alert("Register Successful!");
-                    window.location.href = 'login.html';
+                    Swal.fire({
+                        position: "top-end", // Change position to avoid pushing the page
+                        icon: "success",
+                        title: "Register succesfully",
+                        showConfirmButton: false,
+                        timer: 2000,
+                        toast: true // Enable toast notification
+                    }).then(() => {
+                        window.location.href = 'login.html'; // Redirect to home page
+                    });
                 }).catch((error) => {
                     // Xử lý lỗi nếu có
                     console.error("Error writing data: ", error);
@@ -85,8 +115,16 @@ document.getElementById("submit").addEventListener('click', function (e) {
                 password: encryptedPassword  // Lưu mật khẩu đã mã hóa
             }).then(() => {
                 // Thông báo đăng ký thành công và chuyển hướng đến trang login
-                alert("Register Successful!");
-                window.location.href = 'login.html';
+                Swal.fire({
+                    position: "top-end", // Change position to avoid pushing the page
+                    icon: "success",
+                    title: "Login succesfully",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    toast: true // Enable toast notification
+                }).then(() => {
+                    window.location.href = 'login.html'; // Redirect to home page
+                });
             }).catch((error) => {
                 // Xử lý lỗi nếu có
                 console.error("Error writing data: ", error);

@@ -178,11 +178,21 @@ document.querySelectorAll('.widget').forEach(widget => {
         widget.addEventListener('click', function() {
             button.classList.toggle('on');
             
-            // Determine the state value: 0 for ON, 1 for OFF
-            const stateValue = button.classList.contains('on') ? 0 : 1;
+            const isOn = button.classList.contains('on'); // Kiểm tra nếu nút đang ở trạng thái 'on'
+            const stateValue = isOn ? 0 : 1; // Nếu đang 'on' thì chuyển sang 'off' và ngược lại
             console.log(stateValue);
-            // Update the value in Firebase directly under the device
-            set(dbRef, stateValue);
+
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: isOn ? "Turned ON successfully" : "Turned OFF successfully", // Thay đổi tiêu đề theo trạng thái
+                showConfirmButton: false,
+                timer: 3000,
+                toast: true
+            }).then(() => {
+                set(dbRef, stateValue);
+            });
+           
 
         });
     }

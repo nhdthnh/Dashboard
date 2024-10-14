@@ -365,3 +365,18 @@ body.dark-mode .location-container select {
     font-size: 1.3rem;
 }
 
+
+
+/* Tùy chỉnh Dark Mode cho Swal */
+body.dark-mode .swal2-popup {
+    background-color: #333 !important; /* Màu nền tối */
+    color: #fff !important; /* Màu chữ sáng */
+}
+
+body.dark-mode .swal2-title {
+    color: #fff !important; /* Màu tiêu đề */
+}
+
+body.dark-mode .swal2-icon {
+    color: #fff !important; /* Màu của biểu tượng */
+}

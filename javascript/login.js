@@ -41,8 +41,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (decryptedPassword === password) {
                     // Save username to localStorage
                     localStorage.setItem('loggedInUser', username);
-                    alert("Login Successful!");
-                    window.location.href = 'home.html'; // Redirect to home page
+                    Swal.fire({
+                        position: "top-end", // Change position to avoid pushing the page
+                        icon: "success",
+                        title: "Login succesfully",
+                        showConfirmButton: false,
+                        timer: 2000,
+                        toast: true // Enable toast notification
+                    }).then(() => {
+                        window.location.href = 'home.html'; // Redirect to home page
+                    });
                 } else {
                     alert("Incorrect password.");
                 }
