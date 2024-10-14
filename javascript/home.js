@@ -180,9 +180,10 @@ document.querySelectorAll('.widget').forEach(widget => {
             
             // Determine the state value: 0 for ON, 1 for OFF
             const stateValue = button.classList.contains('on') ? 0 : 1;
-            
+            console.log(stateValue);
             // Update the value in Firebase directly under the device
             set(dbRef, stateValue);
+
         });
     }
 });
@@ -196,7 +197,6 @@ let latestTemperature = null;
 let latestHumidity = null;
 let latestMq135 = null;
 
-// Hàm để thêm dữ liệu mới vào biểu đồ và loại bỏ dữ liệu cũ hơn 10 giây
 // Hàm để thêm dữ liệu mới vào biểu đồ và loại bỏ dữ liệu cũ hơn 10 giây
 function addDataPoint(label, temperature, humidity, mq135) {
     const maxDataPoints = 10; // Giữ lại tối đa 10 điểm dữ liệu trong biểu đồ
@@ -215,7 +215,7 @@ function addDataPoint(label, temperature, humidity, mq135) {
         myChart.data.datasets[2].data.shift(); // Xóa dữ liệu chất lượng không khí cũ nhất
     }
 
-    // Cập nhật biểu đồ
+    // Cập nhật biểu đồ ngay lập tức
     myChart.update();
 }
 
@@ -284,5 +284,58 @@ document.addEventListener('DOMContentLoaded', function() {
     updateDateTime();
 });
 
+// Thay đổi để cập nhật dữ liệu từ Firebase mỗi 5 giây
+const updateInterval = 5000; // 5 giây
+
+setInterval(() => {
+    // Lấy giá trị mới từ Firebase
+    get(temperatureRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            latestTemperature = snapshot.val();
+            checkAndAddDataPoint();
+        }
+    });
+
+    get(humidityRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            latestHumidity = snapshot.val();
+            checkAndAddDataPoint();
+        }
+    });
+
+    get(mq135Ref).then((snapshot) => {
+        if (snapshot.exists()) {
+            latestMq135 = snapshot.val();
+            checkAndAddDataPoint();
+        }
+    });
+}, updateInterval);
 
 
+onValue(temperatureRef, (snapshot) => {
+    if (snapshot.exists()) {
+        latestTemperature = snapshot.val();
+        document.getElementById('temperature').textContent = `${latestTemperature}°C`; // Update temperature in HTML
+        console.log(latestTemperature);
+        checkAndAddDataPoint();
+    }
+});
+
+// Listen for real-time updates for humidity
+onValue(humidityRef, (snapshot) => {
+    if (snapshot.exists()) {
+        latestHumidity = snapshot.val();
+        document.getElementById('humidity').textContent = `${latestHumidity}%`; // Update humidity in HTML
+        checkAndAddDataPoint();
+        console.log(latestHumidity);
+    }
+});
+
+// Listen for real-time updates for mq135
+onValue(mq135Ref, (snapshot) => {
+    if (snapshot.exists()) {
+        latestMq135 = snapshot.val();
+        document.getElementById('battery').textContent = `${latestMq135} PPM`; // Update air quality in HTML
+        checkAndAddDataPoint();
+    }
+});
