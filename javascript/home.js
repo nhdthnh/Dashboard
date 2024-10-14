@@ -181,7 +181,6 @@ document.querySelectorAll('.widget').forEach(widget => {
             const isOn = button.classList.contains('on'); // Kiểm tra nếu nút đang ở trạng thái 'on'
             const stateValue = isOn ? 0 : 1; // Nếu đang 'on' thì chuyển sang 'off' và ngược lại
             console.log(stateValue);
-
             Swal.fire({
                 position: "top-end",
                 icon: "success",
