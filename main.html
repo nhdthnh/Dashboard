@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="font/fontawesome-free-6.6.0-web/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+</head>
+<body>
+    <header>
+        <div class="header-controls">
+            <button id="homeButton" class="home-button">
+                <i class="fas fa-home"></i> Home
+            </button>
+            <button id="themeToggle" class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="profile-container">
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-dropdown">
+                    <a href="edit-profile.html" class="username" id="dropdownUsername">Welcome, Username</a>
+                    <button class="logout-button" id="logoutButton">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="widget-container">
+        <div class="widget">
+            <h3 class="location-title">LOCATION 1</h3>
+            <div class="widget-content">
+                <p><i class="fas fa-thermometer-half"></i> Temperature: <span id="temperature" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-tint"></i> Humidity: <span id="humidity" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-smog"></i> Air Quality : <span id="mq135" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-fire"></i> Flame: <span style="margin-right: 20px;">{{ flame1 }}</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 1: <span style="margin-right: 20px; float: right;" id="device1">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 2: <span style="margin-right: 20px; float: right;" id="device2">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 3: <span style="margin-right: 20px; float: right;" id="device3">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 4: <span style="margin-right: 20px; float: right;" id="device4">OFF</span></p>
+            </div>
+        </div>
+        <div class="widget">
+            <h3 class="location-title">LOCATION 2</h3>
+            <div class="widget-content">
+                <p><i class="fas fa-thermometer-half"></i> Temperature: <span id="temperature2" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-tint"></i> Humidity: <span id="humidity2" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-smog"></i> Air Quality : <span id="mq135_2" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-fire"></i> Flame: <span style="margin-right: 20px;">{{ flame2 }}</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 1: <span style="margin-right: 20px; float: right;" id="device1_2">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 2: <span style="margin-right: 20px; float: right;" id="device2_2">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 3: <span style="margin-right: 20px; float: right;" id="device3_2">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 4: <span style="margin-right: 20px; float: right;" id="device4_2">OFF</span></p>
+            </div>
+        </div>
+        <div class="widget">
+            <h3 class="location-title">LOCATION 3</h3>
+            <div class="widget-content">
+                <p><i class="fas fa-thermometer-half"></i> Temperature: <span id="temperature3" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-tint"></i> Humidity: <span id="humidity3" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-smog"></i> Air Quality : <span id="mq135_3" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-fire"></i> Flame: <span style="margin-right: 20px;">{{ flame3 }}</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 1: <span style="margin-right: 20px; float: right;" id="device1_3">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 2: <span style="margin-right: 20px; float: right;" id="device2_3">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 3: <span style="margin-right: 20px; float: right;" id="device3_3">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 4: <span style="margin-right: 20px; float: right;" id="device4_3">OFF</span></p>
+            </div>
+        </div>
+        <div class="widget">
+            <h3 class="location-title">LOCATION 4</h3>
+            <div class="widget-content">
+                <p><i class="fas fa-thermometer-half"></i> Temperature: <span id="temperature4" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-tint"></i> Humidity: <span id="humidity4" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-smog"></i> Air Quality : <span id="mq135_4" style="margin-right: 20px; float: right;">0</span></p>
+                <p><i class="fas fa-fire"></i> Flame: <span style="margin-right: 20px;">{{ flame4 }}</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 1: <span style="margin-right: 20px; float: right;" id="device1_4">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 2: <span style="margin-right: 20px; float: right;" id="device2_4">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 3: <span style="margin-right: 20px; float: right;" id="device3_4">OFF</span></p>
+                <p><i class="fa-solid fa-gears"></i> Device 4: <span style="margin-right: 20px; float: right;" id="device4_4">OFF</span></p>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module" src="javascript/main.js"></script>
+<!-- <script type="module" src="javascript/main_location2.js"></script> -->
+</html>

@@ -344,7 +344,7 @@ onValue(humidityRef, (snapshot) => {
 onValue(mq135Ref, (snapshot) => {
     if (snapshot.exists()) {
         latestMq135 = snapshot.val();
-        document.getElementById('battery').textContent = `${latestMq135} PPM`; // Update air quality in HTML
+        document.getElementById('mq135').textContent = `${latestMq135} PPM`; // Update air quality in HTML
         checkAndAddDataPoint();
     }
 });

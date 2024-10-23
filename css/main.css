@@ -1,0 +1,282 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s;
+    font-family: sans-serif;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    transition: background-color 0.3s;
+    height: 50px;
+    margin: 20px;
+    border-radius: 8px;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+}
+
+.home-button{
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 15px;
+    transition: color 0.3s;
+}
+
+.home-button:hover {
+    color: #c7c4c4;
+}
+
+
+.theme-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 15px;
+    transition: color 0.3s;
+}
+
+.theme-toggle:hover {
+    color: #f0f0f0;
+}
+
+.profile-container {
+    position: relative;
+}
+
+.profile-icon {
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    display: none;
+    min-width: 150px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.profile-container:hover .profile-dropdown {
+    display: block;
+}
+
+.username {
+    color: #333;
+    margin-bottom: 10px;
+    transition: color 0.3s;
+}
+
+.logout-button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logout-button i {
+    margin-right: 5px;
+}
+
+.logout-button:hover {
+    background-color: #003d80;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+}
+
+body.dark-mode header {
+    background-color: #0056b3;
+}
+
+body.dark-mode .main-widget {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .widget {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-mode .widget p,
+body.dark-mode h3 {
+    color: #f0f0f0;
+}
+
+body.dark-mode .profile-dropdown {
+    background-color: #333;
+    border-color: #555;
+}
+
+body.dark-mode .username {
+    color: #f0f0f0;
+}
+
+body.dark-mode .logout-button {
+    background-color: #007bff;
+}
+
+body.dark-mode .logout-button:hover {
+    background-color: #0056b3;
+}
+
+body.dark-mode .location-container select {
+    background-color: #444; /* Màu nền cho dark mode */
+    color: #f0f0f0; /* Màu chữ cho dark mode */
+    border-color: #555; /* Màu viền cho dark mode */
+}
+
+
+
+/* Responsive styles for mobile phones */
+@media screen and (max-width: 767px) {
+    body {
+        font-size: 14px; /* Adjust font size for better readability */
+    }
+
+    header {
+        flex-direction: column; /* Stack header items vertically */
+        align-items: flex-start; /* Align items to the start */
+    }
+
+    .header-controls {
+        margin-top: 10px; /* Add margin for spacing */
+    }
+
+    .home-button, .theme-toggle {
+        font-size: 18px; /* Adjust button font size */
+    }
+
+    .profile-dropdown {
+        min-width: 100%; /* Make dropdown full width */
+    }
+
+    .widget-container {
+        flex-direction: column; /* Stack widgets vertically */
+        padding: 10px; /* Reduce padding */
+    }
+
+    .widget {
+        height: auto; /* Allow widgets to adjust height */
+        margin-bottom: 20px; /* Add spacing between widgets */
+    }
+
+    .widget-content {
+        margin-left: 0; /* Remove left margin */
+    }
+}
+
+/* For very small screens */
+@media screen and (max-width: 375px) {
+    body {
+        font-size: 12px; /* Further reduce font size */
+    }
+
+    .home-button, .theme-toggle {
+        font-size: 16px; /* Further adjust button font size */
+    }
+
+    .logout-button {
+        font-size: 12px; /* Adjust logout button font size */
+    }
+}
+
+/* Tùy chỉnh Dark Mode cho Swal */
+body.dark-mode .swal2-popup {
+    background-color: #333 !important; /* Màu nền tối */
+    color: #fff !important; /* Màu chữ sáng */
+}
+
+body.dark-mode .swal2-title {
+    color: #fff !important; /* Màu tiêu đề */
+}
+
+body.dark-mode .swal2-icon {
+    color: #fff !important; /* Màu của biểu tượng */
+}
+
+
+/* Add this to css/main.css */
+.widget-container {
+    display: flex;
+    gap: 20px; /* Space between widgets */
+    padding: 20px; /* Optional padding around the container */
+}
+
+.widget {
+    flex: 1; /* Allow widgets to grow equally */
+    height: 350px; /* Set a height for the widgets */
+    background-color: #fff4f4; /* Background color for the widgets */
+    border-radius: 10px; /* Rounded corners */
+    border: #2a2a2a solid 0.5px;
+}
+
+.widget-content{
+    margin-left: 20px;
+}
+
+.location-title {
+    text-align: center; /* Center the text */
+}
+
+/* Icon colors for widget content */
+.widget-content i {
+    color: #333; /* Default icon color */
+}
+
+.widget-content .fa-thermometer-half {
+    color: #ff0000; /* Color for Temperature icon */
+}
+
+.widget-content .fa-tint {
+    color: #00bfff; /* Color for Humidity icon */
+}
+
+.widget-content .fa-smog {
+    color: #9bff96; /* Color for Air Quality icon */
+}
+
+.widget-content .fa-fire {
+    color: #ff4500; /* Color for Flame icon */
+}
+
+.widget-content .fa-gears {
+    color: #000000; /* Màu cho biểu tượng OFF */
+}
+body.dark-mode .widget-content .fa-gears{
+    color: #ffffff; /* Màu cho biểu tượng OFF */
+}

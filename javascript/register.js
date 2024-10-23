@@ -16,6 +16,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+function updateURL() {
+    const select = document.getElementById('locationSelect');
+    const selectedValue = select.value;
+    const newURL = `home.html/location${selectedValue}`;
+    window.history.pushState({ path: newURL }, '', newURL);
+}
 
 
 document.getElementById("showPassword").addEventListener('change', function () {

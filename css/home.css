@@ -16,6 +16,8 @@ header {
     align-items: center;
     transition: background-color 0.3s;
     height: 50px;
+    margin: 20px;
+    border-radius: 8px;
 }
 
 .container {
@@ -123,6 +125,21 @@ canvas {
     display: flex;
     align-items: center;
 }
+
+.home-button{
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 15px;
+    transition: color 0.3s;
+}
+
+.home-button:hover {
+    color: #c7c4c4;
+}
+
 
 .theme-toggle {
     background: none;
