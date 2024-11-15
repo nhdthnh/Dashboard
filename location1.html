@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="./css/location1.css">
     <link rel="stylesheet" href="font/fontawesome-free-6.6.0-web/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -17,9 +17,14 @@
 
 <body>
     <header>
+        <div class="index">
+            <a href="main.html" class="back-link">
+                <i class="fa-solid fa-backward"></i>
+            </a>
+        </div>
         <div class="header-controls">
-            <button id="homeButton" class="home-button">
-                <i class="fas fa-home"></i> Home
+            <button id="homeButton" class="home-button" onclick="scrollToTop()">
+                <i class="fa-solid fa-chart-line" style="margin-right: 5px; font-weight:600px;"></i>Location 1
             </button>
             <button id="themeToggle" class="theme-toggle">
                 <i class="fas fa-moon"></i>
@@ -29,45 +34,44 @@
                     <i class="fas fa-user-circle"></i>
                 </div>
                 <div class="profile-dropdown">
-                    <a href="edit-profile.html" class="username" id="dropdownUsername">Welcome, Username</a>
+                    <div class="username" id="dropdownUsername">Welcome, Username</div>
+                    <button class="edit-button" id="editButton" onclick="location.href='edit-profile.html'">
+                        <i class="fas fa-user-edit" style="margin-right: 5px;"></i> Edit Profile
+                    </button>
                     <button class="logout-button" id="logoutButton">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
                 </div>
             </div>
         </div>
-        <!-- <div class="datetime-container">
-            <span id="currentDateTime"></span>
-        </div> -->
     </header>
-    
-
-      <div class="location-container">
-        <select id="locationSelect">
-            <option value="LOCATION 1">Location 1</option>
-            <option value="LOCATION 2">Location 2</option>
-            <option value="LOCATION 3">Location 3</option>
-            <option value="LOCATION 4">Location 4</option>
-            <option value="LOCATION 5">Location 5</option>
-            <option value="LOCATION 6">Location 6</option>
-        </select>
-        
-    </div>
     <div class="container">
         
         <div class="main-widget">
             <h3>Current Conditions</h3>
             <div class="widget">
                 <p>Temperature:<br> <span id="temperature">Loading...</span></p>
+                <div class="threshold-container">
+                    <label for="tempThreshold">Threshold:</label>
+                    <input type="text" id="tempThreshold" value="50" />
+                </div>
             </div>
             <div class="widget">
                 <p>Humidity:<br> <span id="humidity">Loading...</span></p>
+                <div class="threshold-container">
+                    <label for="humidityThreshold">Threshold:</label>
+                    <input type="text" id="humidityThreshold" value="50" />
+                </div>
             </div>
             <div class="widget">
                 <p>Air Quality:<br> <span id="mq135">Loading...</span></p>
+                <div class="threshold-container">
+                    <label for="airQualityThreshold">Threshold:</label>
+                    <input type="text" id="airQualityThreshold" value="250" />
+                </div>
             </div>
             <div class="widget">
-                <p>Flame:<br> <span id="luminosity">Loading...</span></p>
+                <p>Flame:<br> <span id="flame">Loading...</span></p>
             </div>
         </div>
         <div class="main-widget">
@@ -97,45 +101,24 @@
     
         
         <div class="main-widget">
-            <h3>Current Conditions</h3>
-            <div class="widget">
-                <p>Temperature: <span id="temperature">-5.6°C</span></p>
-            </div>
-            <div class="widget">
-                <p>Humidity: <span id="humidity">53.8%</span></p>
-            </div>
-            <div class="widget">
-                <p>Battery: <span id="battery">32.4%</span></p>
-            </div>
-            <div class="widget">
-                <p>Luminosity: <span id="luminosity">455 lux</span></p>
+            <h3>Weekly Conditions</h3>
+            <div class="chart-container">
+                <canvas id="weeklyChart"></canvas>
             </div>
         </div>
     </div>
+    </div>
     <button id="scrollToTop" class="scroll-to-top">↑</button>
-    <script>
-        // Toggle sidebar visibility on button click
-        document.getElementById('themeToggle').addEventListener('click', function() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-        });
-
-        // Show or hide the scroll-to-top button based on scroll position
-        window.addEventListener('scroll', function() {
-            const scrollToTopButton = document.getElementById('scrollToTop');
-            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-                scrollToTopButton.style.display = 'block';
-            } else {
-                scrollToTopButton.style.display = 'none';
-            }
-        });
-
-        // Scroll to top when the button is clicked
-        document.getElementById('scrollToTop').addEventListener('click', function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    </script>
 </body>
-<script type="module" src="javascript/home.js"></script>
+<script type="module" src="javascript/location1.js"></script>
+<script type="module" src="./javascript/get_push_data.js"></script>
+<script>
+    function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // This makes the scroll smooth
+    });
+}
 
+</script>
 </html>

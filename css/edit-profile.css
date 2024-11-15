@@ -24,6 +24,7 @@ h1 {
 }
 
 .form-group {
+    position: relative;
     margin-bottom: 1rem;
 }
 
@@ -91,4 +92,31 @@ button:hover {
     -moz-user-select: none;
     -ms-user-select: none;
 }
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 70%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 1;
+    pointer-events: auto;
+    line-height: 40px;
+}
+
+input[type="password"],
+input[type="text"] {
+    padding-right: 40px;
+    height: 40px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-group {
+    position: relative; /* Keep this for absolute positioning */
+    margin-bottom: 1rem; /* Space between form groups */
+}
+
 

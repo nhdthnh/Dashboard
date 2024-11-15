@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="register-container">
@@ -25,22 +25,19 @@
                 <input type="text" id="username" name="username" required>
             </div>
             <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-                <!-- <input type="checkbox" id="showPassword">
-                <label type="checkbox" for="showPassword" class="show-password-label">Show Password</label> -->
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="showPassword">
-                <label for="showPassword">Show password</label>
-            </div>
-            <div class="input-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" required>
             </div>
             <div class="input-group">
                 <label for="phone">Phone Number</label>
                 <input type="tel" id="phone" name="phone" required>
+            </div>
+            <div class="input-group">
+                <label for="Password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <span class="toggle-password" onclick="togglePassword('password', 'eyeIconOld')">
+                    <i class="fa-regular fa-eye" id="eyeIconOld"></i>
+                </span>
             </div>
             <button type="button" id="submit">Register</button>
         </form>
@@ -51,6 +48,16 @@
         function redirectToLogin() {
             window.location.href = 'login.html';
         }
+        function togglePassword(fieldId, iconId) {
+    const passwordField = document.getElementById(fieldId);
+    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordField.setAttribute('type', type);
+    
+    // Change the eye icon
+    const icon = document.getElementById(iconId);
+    icon.classList.toggle('fa-eye'); // Change icon
+    icon.classList.toggle('fa-eye-slash'); // Change icon
+}
     </script>
     <script type="module" src="javascript/register.js"></script>
 </body>

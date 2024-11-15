@@ -55,7 +55,7 @@ if (savedTheme === 'true') {
 
 // Thay đổi để cập nhật dữ liệu từ Firebase mỗi 5 giây
 const updateInterval = 5000; // 5 giây
-const locationRef = ref(db, `user/${username}/LOCATION 1`);
+const locationRef = ref(db, `user/${username}/LOCATION 1/Sensor`);
 
 setInterval(() => {
     // Lấy giá trị mới từ Firebase
@@ -66,6 +66,8 @@ setInterval(() => {
             document.getElementById('temperature').textContent = `${data.temperature}°C`;
             document.getElementById('humidity').textContent = `${data.humidity}%`;
             document.getElementById('mq135').textContent = `${data.mq135} PPM`;
+            document.getElementById('flame').textContent = `${data.flame}`;
+            if ()
         }
     });
 }, updateInterval);
@@ -88,7 +90,7 @@ function updateDeviceStatuses() {
     const deviceIds = ['device 1', 'device 2', 'device 3', 'device 4']; // Cập nhật ID để khớp với đường dẫn Firebase
 
     deviceIds.forEach(deviceId => {
-        const deviceRef = ref(db, `user/${username}/LOCATION 1/${deviceId}`); // Tham chiếu chính xác đến thiết bị
+        const deviceRef = ref(db, `user/${username}/LOCATION 1/Relay/${deviceId}`); // Tham chiếu chính xác đến thiết bị
         console.log(db);
         get(deviceRef).then(snapshot => {
             if (snapshot.exists()) {
@@ -171,11 +173,39 @@ function updateDeviceStatuses2() {
 }
 
 
-   // In your content script
-   chrome.runtime.sendMessage({ action: "someAction" }, (response) => {
-    if (chrome.runtime.lastError) {
-        console.error(chrome.runtime.lastError);
-    } else {
-        console.log(response);
-    }
+//    // In your content script
+//    chrome.runtime.sendMessage({ action: "someAction" }, (response) => {
+//     if (chrome.runtime.lastError) {
+//         console.error(chrome.runtime.lastError);
+//     } else {
+//         console.log(response);
+//     }
+// });
+
+
+
+const locations = ['LOCATION 1', 'LOCATION 2', 'LOCATION 3', 'LOCATION 4']; // Danh sách các vị trí
+
+locations.forEach(location => {
+    let statusRef = ref(db, `user/${username}/${location}/status`);
+
+    get(statusRef).then(snapshot => {
+        if (snapshot.exists()) {
+            const status = snapshot.val();
+            const statusIcon = document.getElementById(`statusIcon_${location.replace(" ", "")}`); // ID cho từng vị trí
+            if (status === 0) {
+                statusIcon.className = 'fa-solid fa-ban';
+                statusIcon.style.color = 'red';
+            } else {
+                statusIcon.className = 'fa-solid fa-wifi';
+                statusIcon.style.color = 'rgb(0, 255, 0);';
+            }
+        } else {
+            console.log(`No status document found for ${location}!`);
+        }
+    }).catch(error => {
+        console.error(`Error fetching status for ${location}:`, error);
+    });
 });
+
+

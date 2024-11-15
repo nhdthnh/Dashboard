@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
-    <link rel="stylesheet" href="css/edit-profile.css">
+    <link rel="stylesheet" href="./css/edit-profile.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -39,15 +39,24 @@
             <div id="passwordFields" style="display: none;">
                 <div class="form-group">
                     <label for="oldPassword">Old Password:</label>
-                    <input type="password" id="oldPassword" name="oldPassword">
+                    <input type="password" id="oldPassword" name="oldPassword" autocomplete="current-password">
+                    <span class="toggle-password" onclick="togglePassword('oldPassword', 'eyeIconOld')">
+                        <i class="fa-regular fa-eye" id="eyeIconOld"></i>
+                    </span>
                 </div>
                 <div class="form-group">
                     <label for="newPassword">New Password:</label>
-                    <input type="password" id="newPassword" name="newPassword">
+                    <input type="password" id="newPassword" name="newPassword" autocomplete="new-password">
+                    <span class="toggle-password" onclick="togglePassword('newPassword', 'eyeIconNew')">
+                        <i class="fa-regular fa-eye" id="eyeIconNew"></i>
+                    </span>
                 </div>
                 <div class="form-group">
                     <label for="confirmPassword">Confirm New Password:</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword">
+                    <input type="password" id="confirmPassword" name="confirmPassword" autocomplete="new-password">
+                    <span class="toggle-password" onclick="togglePassword('confirmPassword', 'eyeIconConfirm')">
+                        <i class="fa-regular fa-eye" id="eyeIconConfirm"></i>
+                    </span>
                 </div>
             </div>
             <button type="submit">Save Changes</button>
@@ -55,5 +64,17 @@
         <button id="backToHome">Back to Home</button>
     </div>
     <script type="module" src="javascript/edit-profile.js"></script>
+    <script>
+function togglePassword(fieldId, iconId) {
+    const passwordField = document.getElementById(fieldId);
+    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordField.setAttribute('type', type);
+    
+    // Change the eye icon
+    const icon = document.getElementById(iconId);
+    icon.classList.toggle('fa-eye'); // Change icon
+    icon.classList.toggle('fa-eye-slash'); // Change icon
+}
+    </script>
 </body>
 </html>

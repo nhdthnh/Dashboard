@@ -5,25 +5,29 @@ body {
     background-color: #f0f0f0;
     color: #333;
     transition: background-color 0.3s, color 0.3s;
-    font-family: sans-serif;
+    padding-top: 80px; /* Add padding equal to the height of the header */
 }
 
 header {
+    position: fixed; /* Keep the header fixed at the top */
+    top: 0; /* Position it at the top */
+    left: 0; /* Align it to the left */
+    right: 0; /* Align it to the right */
     background-color: #007bff;
     color: white;
     padding: 10px 20px;
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    justify-content: space-between; /* Space between left and right items */
+    align-items: center; /* Center items vertically */
     transition: background-color 0.3s;
     height: 50px;
-    margin: 20px;
-    border-radius: 8px;
+    border-radius: 0 0 8px 8px; /* Apply border-radius to bottom left and bottom right corners */
 }
 
 .header-controls {
     display: flex;
-    align-items: center;
+    align-items: center; /* Center items vertically */
+    margin-left: auto; /* Push controls to the right */
 }
 
 .home-button{
@@ -52,7 +56,7 @@ header {
 }
 
 .theme-toggle:hover {
-    color: #f0f0f0;
+    color: #535353;
 }
 
 .profile-container {
@@ -65,6 +69,10 @@ header {
     color: white;
 }
 
+.profile-container {
+    position: relative;
+}
+
 .profile-dropdown {
     position: absolute;
     top: 100%;
@@ -75,7 +83,7 @@ header {
     padding: 10px;
     display: none;
     min-width: 150px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s, border-color 0.3s;
 }
 
@@ -97,11 +105,11 @@ header {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s;
 }
 
 .logout-button i {
@@ -110,6 +118,37 @@ header {
 
 .logout-button:hover {
     background-color: #003d80;
+}
+
+.edit-button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    margin-bottom: 10px;
+}
+
+.edit-button:hover {
+    background-color: #003d80; /* Darker background on hover */
+}
+
+.index{
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 15px; /* Space between index and other buttons */
+    transition: color 0.3s;
+    margin-left: 0;
 }
 
 /* Dark mode styles */
@@ -169,12 +208,14 @@ body.dark-mode .location-container select {
     }
 
     header {
-        flex-direction: column; /* Stack header items vertically */
-        align-items: flex-start; /* Align items to the start */
+        flex-direction: row; /* Keep items in a row */
+        justify-content: space-between; /* Space between left and right items */
     }
 
     .header-controls {
-        margin-top: 10px; /* Add margin for spacing */
+        margin-top: 0; /* Remove margin for spacing */
+        width: auto; /* Make controls auto width */
+        justify-content: flex-end; /* Align controls to the right */
     }
 
     .home-button, .theme-toggle {
@@ -197,6 +238,10 @@ body.dark-mode .location-container select {
 
     .widget-content {
         margin-left: 0; /* Remove left margin */
+    }
+
+    .index {
+        margin-right: 0; /* Remove right margin for mobile */
     }
 }
 

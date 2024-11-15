@@ -29,22 +29,24 @@ h1 {
 .input-group {
     margin-bottom: 15px;
     text-align: left;
+    position: relative;
 }
 
 .input-group label {
-    display: flex;
+    display: block;
     margin-bottom: 5px;
     color: #333;
 }
 
 .input-group input {
-    width: calc(100% - 20px);
+    width: 100%; /* Adjust width to account for padding */
     padding: 10px;
-    margin: 0;
+    margin: 0; /* Remove default margin */
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Add this line to include padding and border in element's total width and height */
 }
+
 
 button {
     width: 100%;
@@ -119,7 +121,7 @@ h1 {
 }
 
 .input-group input {
-    width: calc(100% - 20px);
+    width: 100%;
     padding: 10px;
     margin: 0;
     border: 1px solid #ccc;
@@ -183,4 +185,22 @@ button:hover {
         padding: 8px; /* Reduce button padding for better readability */
         font-size: 14px; /* Reduce button font size for better readability */
     }
+}
+
+.input-group input[type="password"] {
+    padding-right: 40px; /* Ensure there's enough space for the icon */
+    height: 40px; /* Match the height of the input */
+    box-sizing: border-box; /* Ensure padding is included in the total width */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px; /* Adjust as needed */
+    top: 70%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 1;
+    pointer-events: auto;
+    line-height: 40px; /* Match the height of the input */
+    color: #333; /* Optional: Change color to match your design */
 }

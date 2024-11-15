@@ -17,7 +17,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 document.getElementById('backToHome').addEventListener('click', function() {
-    window.location.href = 'home.html';
+    window.location.href = 'main.html';
 });
 
 // Lấy username từ localStorage
@@ -43,13 +43,12 @@ if (username) {
     get(userRef).then((snapshot) => {
         if (snapshot.exists()) {
             const userData = snapshot.val();
-            console.log("User data:", userData); // In ra toàn bộ thông tin người dùng
 
             // Nếu bạn muốn in ra từng trường cụ thể
             console.log("Email:", userData.email);
             console.log("Full Name:", userData.fullName);
             console.log("Phone Number:", userData.phoneNumber);
-
+            console.log("Password: ", userData.password);
             document.getElementById('email').value = userData.email
             document.getElementById('fullName').value = userData.fullName
             document.getElementById('phoneNumber').value = userData.phoneNumber
@@ -72,7 +71,7 @@ function updateProfile() {
     const newEmail = document.getElementById('email').value.trim();
     const newFullName = document.getElementById('fullName').value.trim();
     const newPhoneNumber = document.getElementById('phoneNumber').value.trim();
-
+;
     // Tạo tham chiếu đến user
     const userRef = ref(db, 'user/' + username);
 
@@ -86,7 +85,14 @@ function updateProfile() {
     update(userRef, updates)
         .then(() => {
             console.log("Profile updated successfully");
-            alert('Thông tin đã được cập nhật thành công!');
+            Swal.fire({
+                position: "top-end", // Change position to avoid pushing the page
+                icon: "success",
+                title: "Update successfully",
+                showConfirmButton: false,
+                timer: 2000,
+                toast: true // Enable toast notification
+            })
         })
         .catch((error) => {
             console.error("Error updating profile: ", error);
@@ -95,10 +101,7 @@ function updateProfile() {
 }
 
 // Thêm event listener cho nút "Save Changes"
-document.querySelector('button[type="submit"]').addEventListener('click', function(e) {
-    e.preventDefault(); // Ngăn form submit mặc định
-    updateProfile(); // Gọi hàm cập nhật
-});
+
 
 // Lấy checkbox và div chứa các trường mật khẩu
 const changePasswordCheckbox = document.getElementById('changePassword');
@@ -113,4 +116,81 @@ changePasswordCheckbox.addEventListener('change', function() {
         // Ẩn các trường nhập liệu mật khẩu
         passwordFields.style.display = 'none';
     }
+});
+
+
+// Function to update the password
+const secretKey = "1010"; // Define your secret key
+
+function updatePassword() {
+    const oldPasswordInput = document.getElementById('oldPassword').value.trim();
+    const newPasswordInput = document.getElementById('newPassword').value.trim();
+    const confirmPasswordInput = document.getElementById('confirmPassword').value.trim();
+
+    const username = localStorage.getItem('loggedInUser');
+    const userRef = ref(db, 'user/' + username);
+
+    get(userRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const userData = snapshot.val();
+            const decryptedPassword = CryptoJS.AES.decrypt(userData.password, secretKey).toString(CryptoJS.enc.Utf8);
+
+            if (oldPasswordInput !== decryptedPassword) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: 'error',
+                    title: 'Incorrect old password.',
+                    text: 'Please try again.',
+                    showConfirmButton: false,
+                    timer: 1200,
+                    toast: true // Enable toast notification
+                });
+                return;
+            }
+
+            if (newPasswordInput !== confirmPasswordInput) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: 'error',
+                    title: 'Password not match.',
+                    text: 'Please try again.',
+                    showConfirmButton: false,
+                    timer: 1200,
+                    toast: true // Enable toast notification
+                });
+                return;
+            }
+
+            const encryptedNewPassword = CryptoJS.AES.encrypt(newPasswordInput, secretKey).toString();
+
+            update(userRef, { password: encryptedNewPassword })
+                .then(() => {
+                    console.log("OK");
+                })
+                .catch((error) => {
+                    console.error("Error updating password: ", error);
+                    Swal.fire({
+                        position: "top-end",
+                        icon: 'error',
+                        title: 'Somethings gone wrong',
+                        text: 'Please try again.',
+                        showConfirmButton: false,
+                        timer: 1200,
+                        toast: true // Enable toast notification
+                    });
+                });
+        } 
+    }).catch((error) => {
+        console.error("Error getting user data:", error);
+    });
+}
+
+// Add event listener for the "Save Changes" button
+document.querySelector('button[type="submit"]').addEventListener('click', function(e) {
+    updateProfile();
+    e.preventDefault(); // Prevent default form submission
+    if (changePasswordCheckbox.checked) { // Check if the checkbox is ticked
+        updatePassword(); // Call the update password function
+    }
+
 });

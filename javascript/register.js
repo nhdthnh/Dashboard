@@ -16,13 +16,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-function updateURL() {
-    const select = document.getElementById('locationSelect');
-    const selectedValue = select.value;
-    const newURL = `home.html/location${selectedValue}`;
-    window.history.pushState({ path: newURL }, '', newURL);
-}
-
 
 document.getElementById("showPassword").addEventListener('change', function () {
     const passwordField = document.getElementById("password");
@@ -41,7 +34,7 @@ document.getElementById("submit").addEventListener('click', function (e) {
     const password = document.getElementById("password").value;
 
     // Mã hóa mật khẩu bằng AES
-    const secretKey = "my-secret-key";  // Bạn nên sử dụng một khóa bí mật an toàn và bảo mật
+    const secretKey = "1010";  // Bạn nên sử dụng một khóa bí mật an toàn và bảo mật
     const encryptedPassword = CryptoJS.AES.encrypt(password, secretKey).toString();
 
     // Kiểm tra sự trùng lặp

@@ -28,6 +28,7 @@ h1 {
 .input-group {
     margin-bottom: 15px;
     text-align: left;
+    position: relative;
 }
 
 .input-group label {
@@ -112,3 +113,26 @@ button:hover {
       margin-top: 5px;
     }
   }
+
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 70%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 1;
+    pointer-events: auto;
+    line-height: 40px;
+}
+
+input[type="password"],
+input[type="text"] {
+    padding-right: 40px;
+    height: 40px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+

@@ -18,11 +18,11 @@ const db = getDatabase(app);
 
 document.addEventListener('DOMContentLoaded', function() {
     // Toggle password visibility
-    document.getElementById("showPassword").addEventListener('change', function () {
-        const passwordField = document.getElementById("password");
-        const type = this.checked ? 'text' : 'password';
-        passwordField.type = type;
-    });
+    // document.getElementById("showPassword").addEventListener('change', function () {
+    //     const passwordField = document.getElementById("password");
+    //     const type = this.checked ? 'text' : 'password';
+    //     passwordField.type = type;
+    // });
 
     // Handle login
     document.querySelector('button[type="submit"]').addEventListener('click', function (e) {
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         get(userRef).then((snapshot) => {
             if (snapshot.exists()) {
                 const userData = snapshot.val();
-                const secretKey = "my-secret-key";  // Replace with your actual secret key
+                const secretKey = "1010";  // Replace with your actual secret key
                 const decryptedPassword = CryptoJS.AES.decrypt(userData.password, secretKey).toString(CryptoJS.enc.Utf8);
 
                 if (decryptedPassword === password) {
@@ -44,18 +44,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     Swal.fire({
                         position: "top-end", // Change position to avoid pushing the page
                         icon: "success",
-                        title: "Login succesfully",
+                        title: "Login successfully",
                         showConfirmButton: false,
                         timer: 2000,
                         toast: true // Enable toast notification
                     }).then(() => {
-                        window.location.href = 'home.html'; // Redirect to home page
+                        window.location.href = 'main.html'; // Redirect to home page
                     });
                 } else {
-                    alert("Incorrect password.");
+                    // Changed alert to Swal.fire
+                    Swal.fire({
+                        position: "top-end",
+                        icon: 'error',
+                        title: 'Incorrect password.',
+                        text: 'Please try again.',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        toast: true // Enable toast notification
+                    });
                 }
             } else {
-                alert("Username does not exist.");
+                // Changed alert to Swal.fire
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Username does not exist.',
+                    text: 'Please check your username.'
+                });
             }
         }).catch((error) => {
             console.error("Error reading data: ", error);
