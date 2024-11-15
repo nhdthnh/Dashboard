@@ -67,7 +67,6 @@ setInterval(() => {
             document.getElementById('humidity').textContent = `${data.humidity}%`;
             document.getElementById('mq135').textContent = `${data.mq135} PPM`;
             document.getElementById('flame').textContent = `${data.flame}`;
-            if ()
         }
     });
 }, updateInterval);
