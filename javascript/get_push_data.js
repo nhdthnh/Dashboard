@@ -12,7 +12,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const max_location = 1;
+
 const username = localStorage.getItem('loggedInUser');
 console.log(username);
 if (username) {
@@ -32,6 +32,49 @@ let count_mq135 = 0;
 let temperature_avg = 0, humidity_avg = 0, mq135_avg = 0; // Move these outside the interval
 let previousTemperature = null, previousHumidity = null, previousMq135 = null; // Store previous values
 
+
+
+// Function to push averages and shift data
+function pushData() {
+    // Shift historical data first
+    for (let i = 7; i >= 2; i--) { // Start from Day 7 down to Day 2
+        const currentDayRef = ref(db, `user/${username}/LOCATION 1/History/Day ${i}`);
+        const nextDayRef = ref(db, `user/${username}/LOCATION 1/History/Day ${i - 1}`);
+        get(currentDayRef).then(snapshot => {
+            if (snapshot.exists()) {
+                set(nextDayRef, snapshot.val()).then(() => {
+                    console.log(`Day ${i} data moved to Day ${i - 1}`);
+                });
+            }
+        });
+    }
+
+    // Push new average values to Day 7
+    set(ref(db, `user/${username}/LOCATION 1/History/Day 7`), {
+        humidity_avg: humidity_avg,
+        mq135_avg: mq135_avg,
+        temperature_avg: temperature_avg,
+        temperature: temperature,
+        humidity: humidity,
+        mq135: mq135
+    }).then(() => {
+        console.log("Pushing to Day 7:", {
+            humidity_avg: humidity_avg,
+            mq135_avg: mq135_avg,
+            temperature_avg: temperature_avg,
+            temperature: temperature,
+            humidity: humidity,
+            mq135: mq135
+        });
+    });
+}
+
+// Attach pushData to the window object
+window.pushData = pushData;
+
+// Listen for key presses
+
+
 // Function to print the current date in day/month/year format
 function printCurrentDate() {
     const currentDate = new Date();
@@ -46,7 +89,41 @@ printCurrentDate();
 
 const interval = setInterval(() => {
     const currentTime = new Date();
-    // ... existing code ...
+    
+    // Check if it's 11:59 PM
+    if (currentTime.getHours() === 0 && currentTime.getMinutes() === 58) {
+        // Push average values to Day 7
+        for (let i = 7; i >= 2; i--) { // Start from Day 7 down to Day 2
+            const currentDayRef = ref(db, `user/${username}/LOCATION 1/History/Day ${i}`);
+            const nextDayRef = ref(db, `user/${username}/LOCATION 1/History/Day ${i - 1}`);
+            get(currentDayRef).then(snapshot => {
+                if (snapshot.exists()) {
+                    set(nextDayRef, snapshot.val()).then(() => {
+                        console.log(`Day ${i} data moved to Day ${i - 1}`);
+                    });
+                }
+            });
+        }
+    
+        // Push new average values to Day 7
+        set(ref(db, `user/${username}/LOCATION 1/History/Day 7`), {
+            humidity_avg: humidity_avg,
+            mq135_avg: mq135_avg,
+            temperature_avg: temperature_avg,
+            temperature: temperature,
+            humidity: humidity,
+            mq135: mq135
+        }).then(() => {
+            console.log("Pushing to Day 7:", {
+                humidity_avg: humidity_avg,
+                mq135_avg: mq135_avg,
+                temperature_avg: temperature_avg,
+                temperature: temperature,
+                humidity: humidity,
+                mq135: mq135
+            });
+        });
+    }
 
     // Get values from sensors
     let temperature = 0, humidity = 0, mq135 = 0; // Initialize variables to 0
@@ -102,6 +179,12 @@ const interval = setInterval(() => {
                 previousMq135 = mq135; // Update previous value
             }
             console.log(`MQ135 avg: ${count_humid > 0 ? mq135_avg : mq135}`); // Log average mq135
+        }
+    });
+    window.addEventListener('keydown', (event) => {
+        // Check if the "p" key is pressed
+        if (event.key === 'p') {
+            pushData(); // Call pushData when "p" is pressed
         }
     });
 }, 5000); // Run every 10 seconds
