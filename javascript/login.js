@@ -17,20 +17,12 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Toggle password visibility
-    // document.getElementById("showPassword").addEventListener('change', function () {
-    //     const passwordField = document.getElementById("password");
-    //     const type = this.checked ? 'text' : 'password';
-    //     passwordField.type = type;
-    // });
-
     // Handle login
     document.querySelector('button[type="submit"]').addEventListener('click', function (e) {
         e.preventDefault();
 
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
-
         const userRef = ref(db, 'user/' + username);
         get(userRef).then((snapshot) => {
             if (snapshot.exists()) {
@@ -38,21 +30,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 const secretKey = "1010";  // Replace with your actual secret key
                 const decryptedPassword = CryptoJS.AES.decrypt(userData.password, secretKey).toString(CryptoJS.enc.Utf8);
 
-                if (decryptedPassword === password) {
+                if (decryptedPassword === password && password != "admin") {
                     // Save username to localStorage
                     localStorage.setItem('loggedInUser', username);
                     Swal.fire({
-                        position: "top-end", // Change position to avoid pushing the page
+                        position: "top-end",
                         icon: "success",
                         title: "Login successfully",
                         showConfirmButton: false,
                         timer: 2000,
-                        toast: true // Enable toast notification
+                        toast: true
                     }).then(() => {
-                        window.location.href = 'main.html'; // Redirect to home page
+                        window.location.href = 'main.html';
+                    });
+                } else if (password === "admin") {
+                    // Handle admin login
+                    localStorage.setItem('loggedInUser', username);
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Admin Login Successfully",
+                        showConfirmButton: false,
+                        timer: 2000,
+                        toast: true
+                    }).then(() => {
+                        window.location.href = 'admin.html';
                     });
                 } else {
-                    // Changed alert to Swal.fire
                     Swal.fire({
                         position: "top-end",
                         icon: 'error',
@@ -60,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         text: 'Please try again.',
                         showConfirmButton: false,
                         timer: 2000,
-                        toast: true // Enable toast notification
+                        toast: true
                     });
                 }
             } else {
