@@ -593,3 +593,11 @@ function updateThresholds() {
 
 // Gọi hàm để cập nhật ngưỡng khi DOM đã tải
 document.addEventListener('DOMContentLoaded', updateThresholds);
+
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('profileDropdown');
+    const profileIcon = document.getElementById('profileIcon');
+    if (!profileIcon.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.style.display = 'none'; // Close the dropdown
+    }
+});

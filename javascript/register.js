@@ -17,11 +17,11 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 
-document.getElementById("showPassword").addEventListener('change', function () {
-    const passwordField = document.getElementById("password");
-    const type = this.checked ? 'text' : 'password';
-    passwordField.type = type;
-});
+// document.getElementById("showPassword").addEventListener('change', function () {
+//     const passwordField = document.getElementById("password");
+//     const type = this.checked ? 'text' : 'password';
+//     passwordField.type = type;
+// });
 
 document.getElementById("submit").addEventListener('click', function (e) {
     e.preventDefault();

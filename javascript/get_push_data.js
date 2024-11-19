@@ -54,9 +54,6 @@ function pushData() {
         humidity_avg: humidity_avg,
         mq135_avg: mq135_avg,
         temperature_avg: temperature_avg,
-        temperature: temperature,
-        humidity: humidity,
-        mq135: mq135
     }).then(() => {
         console.log("Pushing to Day 7:", {
             humidity_avg: humidity_avg,
@@ -91,7 +88,7 @@ const interval = setInterval(() => {
     const currentTime = new Date();
     
     // Check if it's 11:59 PM
-    if (currentTime.getHours() === 0 && currentTime.getMinutes() === 58) {
+    if (currentTime.getHours() === 20 && currentTime.getMinutes() === 20) {
         // Push average values to Day 7
         for (let i = 7; i >= 2; i--) { // Start from Day 7 down to Day 2
             const currentDayRef = ref(db, `user/${username}/LOCATION 1/History/Day ${i}`);

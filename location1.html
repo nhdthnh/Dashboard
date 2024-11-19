@@ -13,6 +13,18 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .widget {
+            transition: background-color 0.3s; /* Smooth transition for background color */
+            cursor: pointer;
+        }
+        .widget:hover {
+            background-color: rgba(132, 132, 132, 0.1); /* Change background color on hover */
+        }
+        .edit-button {
+            white-space: nowrap; /* Prevent text from wrapping */
+        }
+    </style>
 </head>
 
 <body>
@@ -30,15 +42,15 @@
                 <i class="fas fa-moon"></i>
             </button>
             <div class="profile-container">
-                <div class="profile-icon">
+                <div class="profile-icon" id="profileIcon">
                     <i class="fas fa-user-circle"></i>
                 </div>
-                <div class="profile-dropdown">
+                <div class="profile-dropdown" id="profileDropdown" style="display: none;">
                     <div class="username" id="dropdownUsername">Welcome, Username</div>
-                    <button class="edit-button" id="editButton" onclick="location.href='edit-profile.html'">
+                    <button class="edit-button" id="editButton" onclick="location.href='edit-profile.html'" style="white-space: nowrap;">
                         <i class="fas fa-user-edit" style="margin-right: 5px;"></i> Edit Profile
                     </button>
-                    <button class="logout-button" id="logoutButton">
+                    <button class="logout-button" id="logoutButton" onclick="location.href='login.html'">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
                 </div>
@@ -120,5 +132,22 @@
     });
 }
 
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('profileDropdown');
+    const profileIcon = document.getElementById('profileIcon');
+    if (!profileIcon.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.style.display = 'none'; // Close the dropdown
+    }
+});
+
+// Thêm event listener cho profile icon
+document.getElementById('profileIcon').addEventListener('click', function() {
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown.style.display === 'none') {
+        dropdown.style.display = 'block';
+    } else {
+        dropdown.style.display = 'none';
+    }
+});
 </script>
 </html>

@@ -12,8 +12,18 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    
+    <style>
+        .widget {
+            transition: background-color 0.3s; /* Smooth transition for background color */
+            cursor: pointer;
+        }
+        .widget:hover {
+            background-color: rgba(132, 132, 132, 0.1); /* Change background color on hover */
+        }
+        .edit-button {
+            white-space: nowrap; /* Prevent text from wrapping */
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -21,19 +31,16 @@
             <i class="fa-solid fa-table-columns" style="margin-right: 5px;"></i>Dashboard
         </div>
         <div class="header-controls">
-            <button id="homeButton" class="home-button" onclick="scrollToTop()">
-                <i class="fas fa-home"></i> Home
-            </button>
             <button id="themeToggle" class="theme-toggle">
                 <i class="fas fa-moon"></i>
             </button>
             <div class="profile-container">
-                <div class="profile-icon">
+                <div class="profile-icon" id="profileIcon">
                     <i class="fas fa-user-circle"></i>
                 </div>
-                <div class="profile-dropdown">
+                <div class="profile-dropdown" id="profileDropdown" style="display: none;">
                     <div class="username" id="dropdownUsername">Welcome, Username</div>
-                    <button class="edit-button" id="editButton" onclick="location.href='edit-profile.html'">
+                    <button class="edit-button" id="editButton" onclick="location.href='edit-profile.html'" style="white-space: nowrap;">
                         <i class="fas fa-user-edit" style="margin-right: 5px;"></i> Edit Profile
                     </button>
                     <button class="logout-button" id="logoutButton" onclick="location.href='login.html'">
@@ -45,12 +52,13 @@
     </header>
     <div class="widget-container">
         <div class="widget" onclick="location.href='location1.html'">
+            <div class="close-button" style="display: none;">X</div>
             <h3 class="location-title">LOCATION 1 <i id="statusIcon_LOCATION1" class="fa-solid fa-wifi" style="margin-left: 5px; color: rgb(0, 255, 0);"></i></h3>
             <div class="widget-content">
                 <p><i class="fas fa-thermometer-half"></i> Temperature: <span id="temperature" style="margin-right: 20px; float: right;">0</span></p>
                 <p><i class="fas fa-tint"></i> Humidity: <span id="humidity" style="margin-right: 20px; float: right;">0</span></p>
                 <p><i class="fas fa-smog"></i> Air Quality : <span id="mq135" style="margin-right: 20px; float: right;">0</span></p>
-                <p><i class="fas fa-fire"></i> Flame: <span style="margin-right: 20px;float: right;">No</span></p>
+                <p><i class="fas fa-fire"></i> Flame: <span id ="flame" style="margin-right: 20px;float: right;">No</span></p>
                 <p><i class="fa-solid fa-gears"></i> Device 1: <span style="margin-right: 20px; float: right;" id="device1">OFF</span></p>
                 <p><i class="fa-solid fa-gears"></i> Device 2: <span style="margin-right: 20px; float: right;" id="device2">OFF</span></p>
                 <p><i class="fa-solid fa-gears"></i> Device 3: <span style="margin-right: 20px; float: right;" id="device3">OFF</span></p>
@@ -58,6 +66,7 @@
             </div>
         </div>
         <div class="widget">
+            <div class="close-button" style="display: none;">X</div>
             <h3 class="location-title">LOCATION 2 <i id="statusIcon_LOCATION2" class="fa-solid fa-wifi" style="margin-left: 5px; color: rgb(0, 255, 0);"></i></h3>
             <div class="widget-content">
                 <p><i class="fas fa-thermometer-half"></i> Temperature: <span id="temperature2" style="margin-right: 20px; float: right;">0</span></p>
@@ -71,6 +80,7 @@
             </div>
         </div>
         <div class="widget">
+            <div class="close-button" style="display: none;">X</div>
             <h3 class="location-title">LOCATION 3 <i id="statusIcon_LOCATION3" class="fa-solid fa-wifi" style="margin-left: 5px; color: rgb(0, 255, 0);"></i></h3>
             <div class="widget-content">
                 <p><i class="fas fa-thermometer-half"></i> Temperature: <span id="temperature3" style="margin-right: 20px; float: right;">0</span></p>
@@ -84,6 +94,7 @@
             </div>
         </div>
         <div class="widget">
+            <div class="close-button" style="display: none;">X</div>
             <h3 class="location-title">LOCATION 4 <i id="statusIcon_LOCATION4" class="fa-solid fa-wifi" style="margin-left: 5px; color: rgb(0, 255, 0);"></i></h3>
             <div class="widget-content">
                 <p><i class="fas fa-thermometer-half"></i> Temperature: <span id="temperature4" style="margin-right: 20px; float: right;">0</span></p>
@@ -107,5 +118,17 @@
     });
 }
 
+function toggleDropdown() {
+    const dropdown = document.getElementById('profileDropdown');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+// Add this event listener to close the dropdown when clicking outside of it
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('profileDropdown');
+    const profileIcon = document.getElementById('profileIcon');
+    if (!profileIcon.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.style.display = 'none'; // Close the dropdown
+    }
+});
 </script>
 </html>

@@ -57,16 +57,46 @@ if (savedTheme === 'true') {
 const updateInterval = 5000; // 5 giây
 const locationRef = ref(db, `user/${username}/LOCATION 1/Sensor`);
 
+// Declare flameAlertTimeout at a higher scope
+let flameAlertTimeout; // Declare the variable
+
 setInterval(() => {
     // Lấy giá trị mới từ Firebase
     get(locationRef).then((snapshot) => {
         if (snapshot.exists()) {
             const data = snapshot.val();
             // Update the UI with the fetched data
-            document.getElementById('temperature').textContent = `${data.temperature}°C`;
-            document.getElementById('humidity').textContent = `${data.humidity}%`;
-            document.getElementById('mq135').textContent = `${data.mq135} PPM`;
-            document.getElementById('flame').textContent = `${data.flame}`;
+            const temperatureElement = document.getElementById('temperature');
+            const humidityElement = document.getElementById('humidity');
+            const mq135Element = document.getElementById('mq135');
+            const flameElement = document.getElementById('flame');
+
+            if (temperatureElement) {
+                temperatureElement.textContent = `${data.temperature}°C`;
+            }
+            if (humidityElement) {
+                humidityElement.textContent = `${data.humidity}%`;
+            }
+            if (mq135Element) {
+                mq135Element.textContent = `${data.mq135} PPM`;
+            }
+            if (flameElement) {
+                flameElement.textContent = data.flame === 1 ? "YES" : "NO";
+
+                if (data.flame === 1) {
+                    // Check if the alert has been shown in the last 10 seconds
+                    const currentTime = Date.now();
+                    if (!flameAlertTimeout || currentTime - flameAlertTimeout >= 10000) {
+                        flameAlertTimeout = currentTime; // Update the last alert time
+                        Swal.fire({
+                            title: 'Alert!',
+                            text: 'Flame detected in LOCATION 1!',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }
+            }
         }
     });
 }, updateInterval);
@@ -172,14 +202,6 @@ function updateDeviceStatuses2() {
 }
 
 
-//    // In your content script
-//    chrome.runtime.sendMessage({ action: "someAction" }, (response) => {
-//     if (chrome.runtime.lastError) {
-//         console.error(chrome.runtime.lastError);
-//     } else {
-//         console.log(response);
-//     }
-// });
 
 
 
@@ -208,3 +230,47 @@ locations.forEach(location => {
 });
 
 
+document.querySelectorAll('.location-widget').forEach(widget => {
+    const closeButton = widget.querySelector('.close-button');
+    const locationName = widget.id; // Assuming the ID is the location name
+
+    closeButton.addEventListener('click', () => {
+        Swal.fire({
+            title: 'Confirm Deletion',
+            text: "Type 'delete' to confirm:",
+            input: 'text',
+            showCancelButton: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            preConfirm: (inputValue) => {
+                if (inputValue !== 'delete') {
+                    Swal.showValidationMessage('You need to type "delete" to confirm');
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Call function to delete location from Firebase
+                deleteLocationFromFirebase(locationName);
+            }
+        });
+    });
+});
+
+function deleteLocationFromFirebase(locationName) {
+    const locationRef = db.ref(`user/nhdthnh/${locationName}`);
+    locationRef.remove()
+        .then(() => {
+            Swal.fire('Deleted!', 'The location has been deleted.', 'success');
+            // Optionally, remove the widget from the DOM
+            document.getElementById(locationName).remove();
+        })
+        .catch((error) => {
+            Swal.fire('Error!', 'There was an error deleting the location.', 'error');
+        });
+}
+
+// Add this script to handle the dropdown toggle
+document.getElementById('profileIcon').addEventListener('click', function() {
+    const dropdown = document.getElementById('profileDropdown');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+});
