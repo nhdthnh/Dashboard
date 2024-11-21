@@ -132,6 +132,11 @@ document.getElementById('addLocationForm').addEventListener('submit', async (e) 
                 "mq135": 0,
                 "temperature": 0
             },
+            Threshold: {
+                "airQualityThreshold": 0,
+                "humidityThreshold": 0,
+                "temperatureThreshold": 0
+            },
             status: "0"
         };
         
