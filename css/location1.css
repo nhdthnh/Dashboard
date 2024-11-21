@@ -156,6 +156,7 @@ header {
 }
 
 .widget {
+    transition: all 0.3s ease;
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
     border-radius: 16px;
@@ -207,8 +208,13 @@ canvas {
 
 .chart-container {
     position: relative;
-    height: 400px;
-    width: 100%;
+    width: 100%; /* Đảm bảo biểu đồ chiếm toàn bộ chiều rộng */
+    height: auto; /* Chiều cao tự động */
+}
+
+.chart-container h3 {
+    font-size: 24px; /* Kích thước chữ mặc định */
+    text-align: center; /* Căn giữa tiêu đề */
 }
 
 .chart-legend {
@@ -493,3 +499,34 @@ body.dark-mode input[type="range"]:hover {
 .edit-button:hover {
     background-color: #003d80;
 }
+
+/* Responsive cho màn hình nhỏ hơn 768px */
+@media screen and (max-width: 768px) {
+    .chart-container h3 {
+        font-size: 20px; /* Kích thước chữ nhỏ hơn */
+    }
+    .chart-legend {
+        font-size: 12px; /* Kích thước chữ cho legend */
+    }
+    .chart-container canvas {
+        max-width: 100%; /* Đảm bảo canvas không vượt quá chiều rộng */
+        height: auto; /* Chiều cao tự động */
+    }
+}
+
+/* Responsive cho màn hình nhỏ hơn 480px */
+@media screen and (max-width: 480px) {
+    .chart-container h3 {
+        font-size: 18px; /* Kích thước chữ nhỏ hơn nữa */
+    }
+    .chart-legend {
+        font-size: 10px; /* Kích thước chữ cho legend */
+    }
+}
+
+/* Điều chỉnh kích thước chữ cho các nhãn trục */
+.chart-container canvas {
+    max-width: 100%; /* Đảm bảo canvas không vượt quá chiều rộng */
+    height: auto; /* Chiều cao tự động */
+}
+

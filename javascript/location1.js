@@ -13,6 +13,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Define a global constant for the location
+const LOCATION = 'LOCATION 1'; // Replace with actual location if dynamic
 
 const username = localStorage.getItem('loggedInUser');
 console.log(username);
@@ -31,7 +33,6 @@ document.getElementById('logoutButton').addEventListener('click', function () {
     // Chuyển hướng về trang đăng nhập
     window.location.href = 'login.html';
 });
-// Cài đặt giá trị ban đầu cho các gauge
 
 
 const ctx = document.getElementById('myChart').getContext('2d');
@@ -157,8 +158,7 @@ document.querySelectorAll('.widget').forEach(widget => {
     const button = widget.querySelector('.switch');
     if (button) {
         const deviceNumber = widget.dataset.deviceNumber;
-        const location = 'LOCATION 1'; // Replace with actual location if dynamic
-        const path = `user/${username}/${location}/Relay/device ${deviceNumber}`;
+        const path = `user/${username}/${LOCATION}/Relay/device ${deviceNumber}`;
         
         // Reference to the Firebase database path
         const dbRef = ref(db, path);
@@ -203,14 +203,18 @@ document.querySelectorAll('.widget').forEach(widget => {
 });
 
 // Reference to the Firebase database path for each data type
-const temperatureRef = ref(db, `user/${username}/LOCATION 1/Sensor/temperature`);
-const humidityRef = ref(db, `user/${username}/LOCATION 1/Sensor/humidity`);
-const mq135Ref = ref(db, `user/${username}/LOCATION 1/Sensor/mq135`);
-const flameRef = ref(db, `user/${username}/LOCATION 1/Sensor/flame`);
+const temperatureRef = ref(db, `user/${username}/${LOCATION}/Sensor/temperature`);
+const humidityRef = ref(db, `user/${username}/${LOCATION}/Sensor/humidity`);
+const mq135Ref = ref(db, `user/${username}/${LOCATION}/Sensor/mq135`);
+const flameRef = ref(db, `user/${username}/${LOCATION}/Sensor/flame`);
+const tempThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/temperatureThreshold`);
+const humidityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityThreshold`);
+const airQualityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityThreshold`);
 
-let latestTemperature = null;
-let latestHumidity = null;
-let latestMq135 = null;
+
+let latestTemperature = 0;
+let latestHumidity = 0;
+let latestMq135 = 0;
 
 // Hàm để thêm dữ liệu mới vào biểu đồ và loại bỏ dữ liệu cũ hơn 10 giây
 function addDataPoint(label, temperature, humidity, mq135) {
@@ -248,59 +252,8 @@ function checkAndAddDataPoint() {
     }
 }
 
-// Listen for real-time updates for temperature
-onValue(temperatureRef, (snapshot) => {
-    if (snapshot.exists()) {
-        latestTemperature = snapshot.val();
-        checkAndAddDataPoint();
-    }
-});
-
-// Listen for real-time updates for humidity
-onValue(humidityRef, (snapshot) => {
-    if (snapshot.exists()) {
-        latestHumidity = snapshot.val();
-        checkAndAddDataPoint();
-    }
-});
-
-// Listen for real-time updates for mq135
-onValue(mq135Ref, (snapshot) => {
-    if (snapshot.exists()) {
-        latestMq135 = snapshot.val();
-        checkAndAddDataPoint();
-    }
-});
-
-function updateDateTime() {
-    const dateTimeElement = document.getElementById('currentDateTime');
-    if (dateTimeElement) {
-        const now = new Date();
-        const options = { 
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false // Thêm tùy chọn để hiển thị giờ 12 giờ
-        };
-        
-        const timeString = now.toLocaleString('vi-VN', options);
-        const dateString = now.toLocaleDateString('vi-VN'); // Lấy ngày theo định dạng dd/mm/yyyy
-
-        // Cập nhật nội dung với thời gian và ngày trên các dòng khác nhau
-        dateTimeElement.innerHTML = `${timeString}<br>${dateString}`; // Sử dụng <br> để xuống dòng
-    }
-}
-
-// Đảm bảo DOM đã được tải trước khi thực thi script
-document.addEventListener('DOMContentLoaded', function() {
-    // Cp nhật thời gian mỗi giây
-    setInterval(updateDateTime, 1000);
-
-    // Gọi hàm lần đầu để hiển thị ngay lập tức
-    updateDateTime();
-});
-
 // Thay đổi để cập nhật dữ liệu từ Firebase mỗi 5 giây
-const updateInterval = 5000; // 5 giây
+const updateInterval = 4000; // 5 giây
 
 setInterval(() => {
     // Lấy giá trị mới từ Firebase
@@ -326,12 +279,12 @@ setInterval(() => {
     });
 }, updateInterval);
 
+let tempThreshold; // Khai báo tempThreshold ở cấp độ cao hơn
 
 onValue(temperatureRef, (snapshot) => {
     if (snapshot.exists()) {
         latestTemperature = snapshot.val();
         document.getElementById('temperature').textContent = `${latestTemperature}°C`; // Update temperature in HTML
-        console.log(latestTemperature);
         checkAndAddDataPoint();
     }
 });
@@ -340,9 +293,9 @@ onValue(temperatureRef, (snapshot) => {
 onValue(humidityRef, (snapshot) => {
     if (snapshot.exists()) {
         latestHumidity = snapshot.val();
+        console.log(latestHumidity);
         document.getElementById('humidity').textContent = `${latestHumidity}%`; // Update humidity in HTML
         checkAndAddDataPoint();
-        console.log(latestHumidity);
     }
 });
 
@@ -350,9 +303,38 @@ onValue(humidityRef, (snapshot) => {
 onValue(mq135Ref, (snapshot) => {
     if (snapshot.exists()) {
         latestMq135 = snapshot.val();
+        console.log(latestMq135);
         document.getElementById('mq135').textContent = `${latestMq135} PPM`; // Update air quality in HTML
         checkAndAddDataPoint();
+    } 
+});
+
+function updateDateTime() {
+    const dateTimeElement = document.getElementById('currentDateTime');
+    if (dateTimeElement) {
+        const now = new Date();
+        const options = { 
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false // Thêm tùy chọn để hiển thị giờ 12 giờ
+        };
+        
+        const timeString = now.toLocaleString('vi-VN', options);
+        const dateString = now.toLocaleDateString('vi-VN'); // Lấy ngày theo định dạng dd/mm/yyyy
+
+        // Cập nhật nội dung với thời gian và ngày trên các dòng khác nhau
+        dateTimeElement.innerHTML = `${timeString}<br>${dateString}`; // Sử dụng <br> để xuống dòng
     }
+}
+
+// Đảm bảo DOM đã được tải trước khi thực thi script
+document.addEventListener('DOMContentLoaded', function() {
+    // Cp nhật thời gian mỗi giây
+    setInterval(updateDateTime, 1000);
+
+    // Gọi hàm lần đầu ể hiển thị ngay lp tức
+    updateDateTime();
+
 });
 
 let flameTimer; // Declare a timer variable
@@ -407,7 +389,8 @@ onValue(flameRef, (snapshot) => {
     }
 });
 
-
+let lastAlertTime = { temperature: 0, humidity: 0, airQuality: 0 }; // Track last alert time for each parameter
+const alertInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('weeklyChart').getContext('2d');
@@ -473,9 +456,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fetch average values from Firebase
     const days = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
     days.forEach((day, index) => {
-        const temperatureRef = ref(db, `user/${username}/LOCATION 1/History/${day}/temperature_avg`);
-        const humidityRef = ref(db, `user/${username}/LOCATION 1/History/${day}/humidity_avg`);
-        const mq135Ref = ref(db, `user/${username}/LOCATION 1/History/${day}/mq135_avg`);
+        const temperatureRef = ref(db, `user/${username}/${LOCATION}/History/${day}/temperature_avg`);
+        const humidityRef = ref(db, `user/${username}/${LOCATION}/History/${day}/humidity_avg`);
+        const mq135Ref = ref(db, `user/${username}/${LOCATION}/History/${day}/mq135_avg`);
 
         // Fetch temperature average
         get(temperatureRef).then((snapshot) => {
@@ -501,29 +484,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update the chart after fetching all data
     Promise.all([
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 1/temperature_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 2/temperature_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 3/temperature_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 4/temperature_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 5/temperature_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 6/temperature_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 7/temperature_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 1/temperature_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 2/temperature_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 3/temperature_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 4/temperature_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 5/temperature_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 6/temperature_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 7/temperature_avg`)),
         // Thêm các tham chiếu cho độ ẩm và chất lượng không khí
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 1/humidity_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 2/humidity_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 3/humidity_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 4/humidity_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 5/humidity_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 6/humidity_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 7/humidity_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 1/humidity_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 2/humidity_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 3/humidity_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 4/humidity_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 5/humidity_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 6/humidity_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 7/humidity_avg`)),
 
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 1/mq135_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 2/mq135_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 3/mq135_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 4/mq135_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 5/mq135_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 6/mq135_avg`)),
-        get(ref(db, `user/${username}/LOCATION 1/History/Day 7/mq135_avg`))
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 1/mq135_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 2/mq135_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 3/mq135_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 4/mq135_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 5/mq135_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 6/mq135_avg`)),
+        get(ref(db, `user/${username}/${LOCATION}/History/Day 7/mq135_avg`))
     ]).then(() => {
         weeklyChart.update(); // Update the chart with new data
     });
@@ -537,7 +520,7 @@ document.getElementById('tempThreshold').addEventListener('change', function() {
         this.value = 50; // Set to average value
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/LOCATION 1/Threshold/temperatureThreshold`);
+    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/temperatureThreshold`);
     set(thresholdRef, newThreshold);
 });
 
@@ -548,7 +531,7 @@ document.getElementById('humidityThreshold').addEventListener('change', function
         this.value = 50; // Set to average value
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/LOCATION 1/Threshold/humidityThreshold`);
+    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityThreshold`);
     set(thresholdRef, newThreshold);
 });
 
@@ -559,16 +542,12 @@ document.getElementById('airQualityThreshold').addEventListener('change', functi
         this.value = 500; // Set to average value
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/LOCATION 1/Threshold/airQualityThreshold`);
+    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityThreshold`);
     set(thresholdRef, newThreshold);
 });
 
 
 function updateThresholds() {
-    const tempThresholdRef = ref(db, `user/${username}/LOCATION 1/Threshold/temperatureThreshold`);
-    const humidityThresholdRef = ref(db, `user/${username}/LOCATION 1/Threshold/humidityThreshold`);
-    const airQualityThresholdRef = ref(db, `user/${username}/LOCATION 1/Threshold/airQualityThreshold`);
-
     // Lấy giá trị ngưỡng nhiệt độ
     onValue(tempThresholdRef, (snapshot) => {
         if (snapshot.exists()) {
@@ -601,3 +580,80 @@ document.addEventListener('click', function(event) {
         dropdown.style.display = 'none'; // Close the dropdown
     }
 });
+
+function checkAllSensorsAndAlert() {
+    let tempExceeded = false;
+    let humidityExceeded = false;
+    let airQualityExceeded = false;
+
+    // Kiểm tra nhiệt độ
+    onValue(temperatureRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const temp = snapshot.val();
+            document.getElementById('temperature').textContent = `${temp}°C`; // Cập nhật giao diện
+            get(tempThresholdRef).then((thresholdSnapshot) => {
+                if (thresholdSnapshot.exists() && temp > thresholdSnapshot.val()) {
+                    tempExceeded = true;
+                    triggerAlertIfNeeded();
+                }
+            });
+        }
+    });
+
+    // Kiểm tra độ ẩm
+    onValue(humidityRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const humidity = snapshot.val();
+            document.getElementById('humidity').textContent = `${humidity}%`; // Cập nhật giao diện
+            get(humidityThresholdRef).then((thresholdSnapshot) => {
+                if (thresholdSnapshot.exists() && humidity > thresholdSnapshot.val()) {
+                    humidityExceeded = true;
+                    triggerAlertIfNeeded();
+                }
+            });
+        }
+    });
+
+    // Kiểm tra chất lượng không khí
+    onValue(mq135Ref, (snapshot) => {
+        if (snapshot.exists()) {
+            const airQuality = snapshot.val();
+            document.getElementById('mq135').textContent = `${airQuality} PPM`; // Cập nhật giao diện
+            get(airQualityThresholdRef).then((thresholdSnapshot) => {
+                if (thresholdSnapshot.exists() && airQuality > thresholdSnapshot.val()) {
+                    airQualityExceeded = true;
+                    triggerAlertIfNeeded();
+                }
+            });
+        }
+    });
+
+    // Hàm hiển thị cảnh báo
+    let alertShown = false; // Đảm bảo chỉ hiển thị 1 cảnh báo
+    function triggerAlertIfNeeded() {
+        if (!alertShown && (tempExceeded || humidityExceeded || airQualityExceeded)) {
+            alertShown = true;
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning!',
+                text: 'Condition warning!!!',
+            });
+        }
+    }
+
+    // Đặt lại các trạng thái sau mỗi 10 giây
+    setTimeout(() => {
+        tempExceeded = false;
+        humidityExceeded = false;
+        airQualityExceeded = false;
+        alertShown = false;
+    }, 10000);
+}
+
+// Gọi lại hàm kiểm tra mỗi 10 giây
+setInterval(checkAllSensorsAndAlert, 10000);
+
+
+
+
+
