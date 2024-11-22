@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/location2.css">
+    <link rel="stylesheet" href="font/fontawesome-free-6.6.0-web/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .widget {
+            transition: background-color 0.3s; /* Smooth transition for background color */
+            cursor: pointer;
+        }
+        .widget:hover {
+            background-color: rgba(132, 132, 132, 0.1); /* Change background color on hover */
+        }
+        .edit-button {
+            white-space: nowrap; /* Prevent text from wrapping */
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="index">
+            <a href="main.html" class="back-link">
+                <i class="fa-solid fa-backward"></i>
+            </a>
+        </div>
+        <div class="header-controls">
+            <button id="homeButton" class="home-button" onclick="scrollToTop()">
+                <i class="fa-solid fa-chart-line" style="margin-right: 5px; font-weight:600px;"></i>Location 2
+            </button>
+            <button id="themeToggle" class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="profile-container">
+                <div class="profile-icon" id="profileIcon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-dropdown" id="profileDropdown" style="display: none;">
+                    <div class="username" id="dropdownUsername">Welcome, Username</div>
+                    <button class="edit-button" id="editButton" onclick="location.href='edit-profile.html'" style="white-space: nowrap;">
+                        <i class="fas fa-user-edit" style="margin-right: 5px;"></i> Edit Profile
+                    </button>
+                    <button class="admin-button" id="adminButton" onclick="checkPassword()">
+                        <i class="fa-solid fa-gear"></i> Admin
+                    </button>
+                    <button class="logout-button" id="logoutButton" onclick="location.href='login.html'">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        
+        <div class="main-widget">
+            <h3>Current Conditions</h3>
+            <div class="widget">
+                <p>Temperature:<br> <span id="temperature">Loading...</span></p>
+                <div class="threshold-container">
+                    <label for="tempThreshold">Threshold:</label>
+                    <input type="text" id="tempThreshold" value="50" />
+                </div>
+            </div>
+            <div class="widget">
+                <p>Humidity:<br> <span id="humidity">Loading...</span></p>
+                <div class="threshold-container">
+                    <label for="humidityThreshold">Threshold:</label>
+                    <input type="text" id="humidityThreshold" value="50" />
+                </div>
+            </div>
+            <div class="widget">
+                <p>Air Quality:<br> <span id="mq135">Loading...</span></p>
+                <div class="threshold-container">
+                    <label for="airQualityThreshold">Threshold:</label>
+                    <input type="text" id="airQualityThreshold" value="250" />
+                </div>
+            </div>
+            <div class="widget">
+                <p>Flame:<br> <span id="flame">Loading...</span></p>
+            </div>
+        </div>
+        <div class="main-widget">
+            <h3>Device Controls</h3>
+            <div class="widget" id="widget1" data-device-number="1">
+                <p>Device 1</p>
+                <button class="switch" id="device1"></button>
+            </div>
+            <div class="widget" id="widget2" data-device-number="2">
+                <p>Device 2</p>
+                <button class="switch" id="device2"></button>
+            </div>
+            <div class="widget" id="widget3" data-device-number="3">
+                <p>Device 3</p>
+                <button class="switch" id="device3"></button>
+            </div>
+            <div class="widget" id="widget4" data-device-number="4">
+                <p>Device 4</p>
+                <button class="switch" id="device4"></button>
+            </div>
+        </div>
+        <div class="main-widget">
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+    
+        
+        <div class="main-widget">
+            <h3>Weekly Conditions</h3>
+            <div class="chart-container">
+                <canvas id="weeklyChart" class="chartjs-render-monitor"></canvas>
+            </div>
+        </div>
+    </div>
+    </div>
+    <button id="scrollToTop" class="scroll-to-top">↑</button>
+</body>
+<script type="module" src="javascript/location2.js"></script>
+<script type="module" src="javascript/get_push_data_1.js"></script>
+<script>
+    function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // This makes the scroll smooth
+    });
+}
+
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('profileDropdown');
+    const profileIcon = document.getElementById('profileIcon');
+    if (!profileIcon.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.style.display = 'none'; // Close the dropdown
+    }
+});
+
+// Thêm event listener cho profile icon
+document.getElementById('profileIcon').addEventListener('click', function() {
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown.style.display === 'none') {
+        dropdown.style.display = 'block';
+    } else {
+        dropdown.style.display = 'none';
+    }
+});
+
+function checkPassword() {
+    Swal.fire({
+        title: 'Enter Password',
+        input: 'password',
+        inputAttributes: {
+            autocapitalize: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Submit',
+        showLoaderOnConfirm: true,
+        preConfirm: (password) => {
+            if (password === 'admin') {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Redirecting to admin page...',
+                    icon: 'success',
+                    timer: 1000, // Hiển thị thông báo trong 1 giây
+                    showConfirmButton: false
+                }).then(() => {
+                    location.href = 'admin.html'; // Redirect to admin page after 1 second
+                });
+            } else {
+                Swal.showValidationMessage('Incorrect password!'); // Show error message
+            }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    });
+}
+
+</script>
+</html>
