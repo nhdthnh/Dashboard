@@ -1,0 +1,85 @@
+    
+#myBtn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: rgb(110, 81, 255);
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 4px;
+  }
+  
+  #myBtn:hover {
+    background-color: #555;
+  }           
+  @media (max-width: 768px) {
+      .d-flex button span {
+          display: none; /* Hide text labels */
+      }
+  }
+  
+  /* Optional: Add dark mode styles */
+  .dark-mode {
+      background-color: #121212; /* Dark background */
+      color: white; /* Default text color */
+  }
+  
+  .dark-mode h2, 
+  .dark-mode label, 
+  .dark-mode .form-control, 
+  .dark-mode .list-group-item,
+  .dark-mode .table th,
+  .dark-mode .table td {
+      color: white; /* Ensure text is white in dark mode */
+  }
+  
+  .dark-mode .card {
+      background-color: #1e1e1e; /* Dark card background */
+      border-color: #333; /* Darker border */
+  }
+  
+  .dark-mode .btn-secondary {
+      background-color: #555; /* Adjust secondary button color */
+      border-color: #777; /* Adjust border color */
+      color: white; /* Ensure button text is white */
+  }
+  
+  .dark-mode .btn-danger {
+      background-color: #c82333; /* Adjust danger button color */
+      border-color: #bd2130; /* Adjust border color */
+      color: white; /* Ensure button text is white */
+  }
+  
+  /* Additional styles for links */
+  .dark-mode a {
+      color: #1e90ff; /* Change link color for better visibility */
+  }
+  
+  /* Dark Mode Table Styles */
+  .dark-mode .table {
+      background-color: #1e1e1e; /* Dark background for the table */
+  }
+  
+  .dark-mode .table tr {
+      background-color: #1e1e1e; /* Dark background for all rows */
+  }
+  
+  .dark-mode .table tr:nth-child(even) {
+      background-color: #1e1e1e; /* Keep even rows the same color */
+  }
+  
+  .dark-mode .table th,
+  .dark-mode .table td {
+      color: white; /* Ensure text is white in dark mode */
+  }
+  
+  /* Optional: Add hover effect for rows */
+  .dark-mode .table tr:hover {
+      background-color: #2a2a2a; /* Slightly lighter background on hover */
+  }

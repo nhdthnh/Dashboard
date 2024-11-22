@@ -17,6 +17,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+const username = localStorage.getItem('loggedInUser');
+console.log(username);
+if (!username) {
+
+    // Nếu không có username trong local storage, chuyển hướng về trang đăng nhập
+    window.location.href = 'login.html';
+}
+
 const dailyData = {
     "humidity_avg": 0,
     "mq135_avg": 0,
@@ -25,7 +33,7 @@ const dailyData = {
 
 // Hiển thị danh sách locations
 function displayLocations() {
-    const locationsRef = ref(db, 'user/nhdthnh');
+    const locationsRef = ref(db, `user/${username}`);
     onValue(locationsRef, (snapshot) => {
         const locationsList = document.getElementById('locationsList');
         locationsList.innerHTML = '';
@@ -72,7 +80,7 @@ window.deleteLocation = async function(locationKey) {
 
     if (result.isConfirmed) {
         try {
-            const locationRef = ref(db, `user/nhdthnh/${locationKey}`);
+            const locationRef = ref(db, `user/${username}/${locationKey}`);
             await remove(locationRef);
             await Swal.fire(
                 'Deleted!',
@@ -93,11 +101,11 @@ window.deleteLocation = async function(locationKey) {
 document.getElementById('addLocationForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const locationName = document.getElementById('locationName').value;
-    const locationsRef = ref(db, 'user/nhdthnh');
+    const locationsRef = ref(db, `user/${username}`);
     
     try {
         const newLocationKey = `LOCATION ${locationName}`;
-        const newLocationRef = ref(db, `user/nhdthnh/${newLocationKey}`);
+        const newLocationRef = ref(db, `user/${username}/${newLocationKey}`);
         
         const snapshot = await get(locationsRef);
         if (snapshot.hasChild(newLocationKey)) {
@@ -137,7 +145,7 @@ document.getElementById('addLocationForm').addEventListener('submit', async (e) 
                 "humidityThreshold": 0,
                 "temperatureThreshold": 0
             },
-            status: "0"
+            status: 0
         };
         
         await set(newLocationRef, newLocationData);
@@ -161,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     displayLocations();
 });
 
-const logRef = ref(db, `user/nhdthnh/LOG`); // Thay username bằng tên người dùng hiện tại
+const logRef = ref(db, `user/${username}/LOG`); // Thay username bằng tên người dùng hiện tại
 
 // Lấy log từ Firebase
 get(logRef).then((snapshot) => {
@@ -179,7 +187,7 @@ get(logRef).then((snapshot) => {
         thead.innerHTML = `
             <tr>
                 <th><input type="checkbox" id="selectAll" /></th> <!-- Checkbox chọn tất cả -->
-                <th>STT</th> <!-- Cột số thứ tự -->
+                <th>Number</th> <!-- Cột số thứ tự -->
                 <th>Time</th>
                 <th>LOG</th>
                 <th>Action</th> <!-- Cột hành động -->
@@ -232,7 +240,7 @@ get(logRef).then((snapshot) => {
 
 // Hàm chỉnh sửa log
 window.editLog = function(key) {
-    const logRefToEdit = ref(db, `user/nhdthnh/LOG/${key}`);
+    const logRefToEdit = ref(db, `user/${username}/LOG/${key}`);
     
     // Lấy giá trị log hiện tại từ Firebase
     get(logRefToEdit).then((snapshot) => {
@@ -366,7 +374,7 @@ async function deleteSelectedLogs() {
         
         if (confirmDelete.isConfirmed) {
             keysToDelete.forEach(async (key) => {
-                const logRefToDelete = ref(db, `user/nhdthnh/LOG/${key}`);
+                const logRefToDelete = ref(db, `user/${username}/LOG/${key}`);
                 await remove(logRefToDelete);
             });
             Swal.fire('Deleted!', 'Selected logs have been deleted.', 'success');

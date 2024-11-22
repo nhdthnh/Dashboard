@@ -15,10 +15,7 @@ const db = getDatabase(app);
 
 const username = localStorage.getItem('loggedInUser');
 console.log(username);
-if (username) {
-    // Hiển thị username trong dropdown
-    document.getElementById('dropdownUsername').textContent = `Welcome, ${username}`;
-} else {
+if (!username) {
     // Nếu không có username trong local storage, chuyển hướng về trang đăng nhập
     window.location.href = 'login.html';
 }

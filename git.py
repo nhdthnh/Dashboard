@@ -11,12 +11,13 @@ def git_push():
 
     # Lấy ngày hiện tại theo định dạng 'dd/mm'
     commit_message = datetime.now().strftime('%d/%m')
-
+    print(commit_message)
     # Thực hiện commit
     subprocess.run(['git', 'commit', '-m', commit_message])
 
     # Thực hiện push
     subprocess.run(['git', 'push'])
+    print("Push success")
 
 # Gọi hàm
 git_push()
