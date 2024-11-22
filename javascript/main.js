@@ -70,7 +70,6 @@ setInterval(() => {
             const humidityElement = document.getElementById('humidity');
             const mq135Element = document.getElementById('mq135');
             const flameElement = document.getElementById('flame');
-
             if (temperatureElement) {
                 temperatureElement.textContent = `${data.temperature}°C`;
             }
@@ -94,9 +93,22 @@ setInterval(() => {
                             icon: 'warning',
                             confirmButtonText: 'OK'
                         });
+                        const timestamp = new Date().toLocaleString('vi-VN', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit', // Thêm giây vào định dạng
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        }).replace(/\//g, '-'); // Replace slashes with dashes
+    
+                        // Create a reference with the formatted timestamp
+                        const logRef = ref(db, `user/${username}/LOG/${timestamp}`); 
+                        set(logRef, `Flame detected LOCATION 1`); // Push the log entry
                     }
                 }
             }
+            
         }
     });
 }, updateInterval);
@@ -143,22 +155,48 @@ function updateDeviceStatuses() {
 }
 
 
-
-
-const locationRef2 = ref(db, `user/${username}/LOCATION 2`);
-
+const locationRef2 = ref(db, `user/${username}/LOCATION 2/Sensor`);
 setInterval(() => {
     // Lấy giá trị mới từ Firebase
     get(locationRef2).then((snapshot) => {
         if (snapshot.exists()) {
             const data = snapshot.val();
             // Update the UI with the fetched data
-            document.getElementById('temperature2').textContent = `${data.temperature}°C`;
-            document.getElementById('humidity2').textContent = `${data.humidity}%`;
-            document.getElementById('mq135_2').textContent = `${data.mq135} PPM`;
+            const temperatureElement2 = document.getElementById('temperature2');
+            const humidityElement2 = document.getElementById('humidity2');
+            const mq135Element2 = document.getElementById('mq135_2');
+            const flameElement2 = document.getElementById('flame2');
+            if (temperatureElement2) {
+                temperatureElement2.textContent = `${data.temperature}°C`;
+            }
+            if (humidityElement2) {
+                humidityElement2.textContent = `${data.humidity}%`;
+            }
+            if (mq135Element2) {
+                mq135Element2.textContent = `${data.mq135} PPM`;
+            }
+            if (flameElement2) {
+                flameElement2.textContent = data.flame === 1 ? "YES" : "NO";  // Thay flame2 thành flame
+                
+                if (data.flame === 1) {  // Giữ nguyên vì đã đúng
+                    // Check if the alert has been shown in the last 10 seconds
+                    const currentTime = Date.now();
+                    if (!flameAlertTimeout || currentTime - flameAlertTimeout >= 10000) {
+                        flameAlertTimeout = currentTime;
+                        Swal.fire({
+                            title: 'Alert!',
+                            text: 'Flame detected in LOCATION 2!',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }
+            }
         }
     });
 }, updateInterval);
+
+
 
 
 onValue(locationRef2, (snapshot) => {
@@ -167,7 +205,6 @@ onValue(locationRef2, (snapshot) => {
         document.getElementById('temperature2').textContent = `${data.temperature}°C`;
         document.getElementById('humidity2').textContent = `${data.humidity}%`;
         document.getElementById('mq135_2').textContent = `${data.mq135} PPM`;
-        
         // // Call updateDeviceStatuses whenever data changes
         updateDeviceStatuses2(); // Ensure device statuses are updated in real-time
     }
@@ -178,7 +215,7 @@ function updateDeviceStatuses2() {
     const deviceIds = ['device 1', 'device 2', 'device 3', 'device 4']; // Cập nhật ID để khớp với đường dẫn Firebase
 
     deviceIds.forEach(deviceId => {
-        const deviceRef = ref(db, `user/${username}/LOCATION 2/${deviceId}`); // Tham chiếu chính xác đến thiết bị
+        const deviceRef = ref(db, `user/${username}/LOCATION 2/Relay/${deviceId}`); // Tham chiếu chính xác đến thiết bị
         console.log(db);
         get(deviceRef).then(snapshot => {
             if (snapshot.exists()) {
@@ -230,44 +267,7 @@ locations.forEach(location => {
 });
 
 
-document.querySelectorAll('.location-widget').forEach(widget => {
-    const closeButton = widget.querySelector('.close-button');
-    const locationName = widget.id; // Assuming the ID is the location name
 
-    closeButton.addEventListener('click', () => {
-        Swal.fire({
-            title: 'Confirm Deletion',
-            text: "Type 'delete' to confirm:",
-            input: 'text',
-            showCancelButton: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
-            preConfirm: (inputValue) => {
-                if (inputValue !== 'delete') {
-                    Swal.showValidationMessage('You need to type "delete" to confirm');
-                }
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Call function to delete location from Firebase
-                deleteLocationFromFirebase(locationName);
-            }
-        });
-    });
-});
-
-function deleteLocationFromFirebase(locationName) {
-    const locationRef = db.ref(`user/nhdthnh/${locationName}`);
-    locationRef.remove()
-        .then(() => {
-            Swal.fire('Deleted!', 'The location has been deleted.', 'success');
-            // Optionally, remove the widget from the DOM
-            document.getElementById(locationName).remove();
-        })
-        .catch((error) => {
-            Swal.fire('Error!', 'There was an error deleting the location.', 'error');
-        });
-}
 
 // Add this script to handle the dropdown toggle
 document.getElementById('profileIcon').addEventListener('click', function() {

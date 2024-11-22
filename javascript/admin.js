@@ -159,4 +159,221 @@ document.getElementById('addLocationForm').addEventListener('submit', async (e) 
 // Khởi tạo hiển thị khi trang được tải
 document.addEventListener('DOMContentLoaded', () => {
     displayLocations();
-}); 
+});
+
+const logRef = ref(db, `user/nhdthnh/LOG`); // Thay username bằng tên người dùng hiện tại
+
+// Lấy log từ Firebase
+get(logRef).then((snapshot) => {
+    if (snapshot.exists()) {
+        const logData = snapshot.val();
+        const logListElement = document.getElementById('logList');
+        logListElement.innerHTML = ''; // Xóa nội dung cũ
+
+        // Tạo bảng
+        const table = document.createElement('table');
+        table.className = 'table table-striped'; // Thêm lớp CSS cho bảng
+
+        // Tạo tiêu đề bảng
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr>
+                <th><input type="checkbox" id="selectAll" /></th> <!-- Checkbox chọn tất cả -->
+                <th>STT</th> <!-- Cột số thứ tự -->
+                <th>Time</th>
+                <th>LOG</th>
+                <th>Action</th> <!-- Cột hành động -->
+            </tr>
+        `;
+        table.appendChild(thead);
+
+        // Tạo thân bảng
+        const tbody = document.createElement('tbody');
+        let index = 1; // Biến đếm số thứ tự
+        const sortedKeys = Object.keys(logData).sort((a, b) => new Date(a.split(' ').reverse().join('-')) - new Date(b.split(' ').reverse().join('-'))); // Sắp xếp theo ngày
+
+        sortedKeys.forEach(key => {
+            const logItem = document.createElement('tr');
+            logItem.innerHTML = `
+                <td><input type="checkbox" class="logCheckbox" data-key="${key}" /></td> <!-- Checkbox cho từng log -->
+                <td>${index++}</td> <!-- Số thứ tự -->
+                <td>${key}</td>
+                <td>${logData[key]}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="editLog('${key}')">Edit</button> <!-- Nút chỉnh sửa -->
+                </td>
+            `;
+            tbody.appendChild(logItem);
+        });
+        table.appendChild(tbody);
+        logListElement.appendChild(table); // Thêm bảng vào phần tử logList
+
+        // Thêm sự kiện cho checkbox chọn tất cả
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.logCheckbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // Thêm nút xóa log
+        const deleteButton = document.createElement('button');
+        deleteButton.innerText = 'Delete Selected Logs';
+        deleteButton.className = 'btn btn-danger';
+        deleteButton.addEventListener('click', deleteSelectedLogs);
+        logListElement.appendChild(deleteButton); // Thêm nút xóa vào phần tử logList
+
+    } else {
+        console.log("No logs found");
+    }
+}).catch((error) => {
+    console.error("Error fetching logs: ", error);
+});
+
+// Hàm chỉnh sửa log
+window.editLog = function(key) {
+    const logRefToEdit = ref(db, `user/nhdthnh/LOG/${key}`);
+    
+    // Lấy giá trị log hiện tại từ Firebase
+    get(logRefToEdit).then((snapshot) => {
+        if (snapshot.exists()) {
+            const currentLogValue = snapshot.val(); // Lấy giá trị log hiện tại
+            const modalHtml = `
+                <div>
+                    <label for="logInput">Edit log:</label>
+                    <textarea id="logInput" rows="4" style="width: 100%;">${currentLogValue}</textarea>
+                </div>
+            `;
+
+            Swal.fire({
+                title: 'Edit Log',
+                html: modalHtml,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel',
+                preConfirm: () => {
+                    const newLogValue = document.getElementById('logInput').value; // Lấy giá trị từ ô text
+                    if (!newLogValue) {
+                        Swal.showValidationMessage('Please enter a log value');
+                    }
+                    return newLogValue;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    set(logRefToEdit, result.value).then(() => {
+                        Swal.fire('Success!', 'Log updated successfully!', 'success');
+                        // Cập nhật lại danh sách log
+                        updateLogList(); // Gọi hàm cập nhật danh sách log
+                    }).catch((error) => {
+                        Swal.fire('Error!', 'Error updating log: ' + error.message, 'error');
+                    });
+                }
+            });
+        } else {
+            Swal.fire('Error!', 'Log not found.', 'error');
+        }
+    }).catch((error) => {
+        Swal.fire('Error!', 'Error fetching log: ' + error.message, 'error');
+    });
+}
+
+// Hàm cập nhật danh sách log
+function updateLogList() {
+    get(logRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const logData = snapshot.val();
+            const logListElement = document.getElementById('logList');
+            logListElement.innerHTML = ''; // Xóa nội dung cũ
+
+            // Tạo bảng
+            const table = document.createElement('table');
+            table.className = 'table table-striped'; // Thêm lớp CSS cho bảng
+
+            // Tạo tiêu đề bảng
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th><input type="checkbox" id="selectAll" /></th> <!-- Checkbox chọn tất cả -->
+                    <th>STT</th> <!-- Cột số thứ tự -->
+                    <th>Time</th>
+                    <th>LOG</th>
+                    <th>Action</th> <!-- Cột hành động -->
+                </tr>
+            `;
+            table.appendChild(thead);
+
+            // Tạo thân bảng
+            const tbody = document.createElement('tbody');
+            let index = 1; // Biến đếm số thứ tự
+            const sortedKeys = Object.keys(logData).sort((a, b) => new Date(a.split(' ').reverse().join('-')) - new Date(b.split(' ').reverse().join('-'))); // Sắp xếp theo ngày
+
+            sortedKeys.forEach(key => {
+                const logItem = document.createElement('tr');
+                logItem.innerHTML = `
+                    <td><input type="checkbox" class="logCheckbox" data-key="${key}" /></td> <!-- Checkbox cho từng log -->
+                    <td>${index++}</td> <!-- Số thứ tự -->
+                    <td>${key}</td>
+                    <td>${logData[key]}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editLog('${key}')">Edit</button> <!-- Nút chỉnh sửa -->
+                    </td>
+                `;
+                tbody.appendChild(logItem);
+            });
+            table.appendChild(tbody);
+            logListElement.appendChild(table); // Thêm bảng vào phần tử logList
+
+            // Thêm sự kiện cho checkbox chọn tất cả
+            document.getElementById('selectAll').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.logCheckbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+            });
+
+            // Thêm nút xóa log
+            const deleteButton = document.createElement('button');
+            deleteButton.innerText = 'Delete Selected Logs';
+            deleteButton.className = 'btn btn-danger';
+            deleteButton.addEventListener('click', deleteSelectedLogs);
+            logListElement.appendChild(deleteButton); // Thêm nút xóa vào phần tử logList
+
+        } else {
+            console.log("No logs found");
+        }
+    }).catch((error) => {
+        console.error("Error fetching logs: ", error);
+    });
+}
+
+// Hàm xóa các log đã chọn
+async function deleteSelectedLogs() {
+    const selectedCheckboxes = document.querySelectorAll('.logCheckbox:checked');
+    const keysToDelete = Array.from(selectedCheckboxes).map(checkbox => checkbox.getAttribute('data-key'));
+
+    if (keysToDelete.length > 0) {
+        // Thay thế confirm bằng Swal
+        const confirmDelete = await Swal.fire({
+            title: 'Are you sure?',
+            text: `Do you want to delete ${keysToDelete.length} logs?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete them!',
+            cancelButtonText: 'Cancel'
+        });
+        
+        if (confirmDelete.isConfirmed) {
+            keysToDelete.forEach(async (key) => {
+                const logRefToDelete = ref(db, `user/nhdthnh/LOG/${key}`);
+                await remove(logRefToDelete);
+            });
+            Swal.fire('Deleted!', 'Selected logs have been deleted.', 'success');
+            // Cập nhật lại danh sách log
+            updateLogList(); // Gọi hàm cập nhật danh sách log
+        }
+    } else {
+        Swal.fire('Error!', 'No logs selected for deletion.', 'error');
+    }
+} 

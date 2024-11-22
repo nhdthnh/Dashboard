@@ -14,7 +14,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 // Define a global constant for the location
-const LOCATION = 'LOCATION 1'; // Replace with actual location if dynamic
+const LOCATION = 'LOCATION 2'; // Replace with actual location if dynamic
 
 const username = localStorage.getItem('loggedInUser');
 console.log(username);
@@ -370,7 +370,7 @@ onValue(flameRef, (snapshot) => {
 
                     // Create a reference with the formatted timestamp
                     const logRef = ref(db, `user/${username}/LOG/${timestamp}`); 
-                    set(logRef, `Flame detected LOCATION 1`); // Push the log entry
+                    set(logRef, `Flame detected ${LOCATION}`); // Push the log entry
                 }
 
                 // Clear any existing timer
@@ -388,6 +388,18 @@ onValue(flameRef, (snapshot) => {
                                     title: 'Warning!',
                                     text: 'Flame detected for 20 seconds!',
                                 });
+                                const timestamp = new Date().toLocaleString('vi-VN', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit', // Thêm giây vào định dạng
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                }).replace(/\//g, '-'); // Replace slashes with dashes
+            
+                                // Create a reference with the formatted timestamp
+                                const logRef = ref(db, `user/${username}/LOG/${timestamp}`); 
+                                set(logRef, `Flame detected ${LOCATION}`); // Push the log entry
                             }
                         }
                     });

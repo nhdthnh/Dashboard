@@ -22,9 +22,13 @@ if (username) {
     // Nếu không có username trong local storage, chuyển hướng về trang đăng nhập
     window.location.href = 'login.html';
 }
-const temperatureRef = ref(db, `user/${username}/LOCATION 1/Sensor/temperature`);
-const humidityRef = ref(db, `user/${username}/LOCATION 1/Sensor/humidity`);
-const mq135Ref = ref(db, `user/${username}/LOCATION 1/Sensor/mq135`);
+
+// Define a global variable for location
+const locationPath = "LOCATION 1"; // New variable for location
+
+const temperatureRef = ref(db, `user/${username}/${locationPath}/Sensor/temperature`);
+const humidityRef = ref(db, `user/${username}/${locationPath}/Sensor/humidity`);
+const mq135Ref = ref(db, `user/${username}/${locationPath}/Sensor/mq135`);
 
 let count_temp = 0; // Initialize count to track the number of readings
 let count_humid = 0;
@@ -38,8 +42,8 @@ let previousTemperature = null, previousHumidity = null, previousMq135 = null; /
 function pushData() {
     // Shift historical data first
     for (let i = 7; i >= 2; i--) { // Start from Day 7 down to Day 2
-        const currentDayRef = ref(db, `user/${username}/LOCATION 1/History/Day ${i}`);
-        const nextDayRef = ref(db, `user/${username}/LOCATION 1/History/Day ${i - 1}`);
+        const currentDayRef = ref(db, `user/${username}/${locationPath}/History/Day ${i}`);
+        const nextDayRef = ref(db, `user/${username}/${locationPath}/History/Day ${i - 1}`);
         get(currentDayRef).then(snapshot => {
             if (snapshot.exists()) {
                 set(nextDayRef, snapshot.val()).then(() => {
@@ -50,7 +54,7 @@ function pushData() {
     }
 
     // Push new average values to Day 7
-    set(ref(db, `user/${username}/LOCATION 1/History/Day 7`), {
+    set(ref(db, `user/${username}/${locationPath}/History/Day 7`), {
         humidity_avg: humidity_avg,
         mq135_avg: mq135_avg,
         temperature_avg: temperature_avg,
@@ -91,8 +95,8 @@ const interval = setInterval(() => {
     if (currentTime.getHours() === 20 && currentTime.getMinutes() === 20) {
         // Push average values to Day 7
         for (let i = 7; i >= 2; i--) { // Start from Day 7 down to Day 2
-            const currentDayRef = ref(db, `user/${username}/LOCATION 1/History/Day ${i}`);
-            const nextDayRef = ref(db, `user/${username}/LOCATION 1/History/Day ${i - 1}`);
+            const currentDayRef = ref(db, `user/${username}/${locationPath}/History/Day ${i}`);
+            const nextDayRef = ref(db, `user/${username}/${locationPath}/History/Day ${i - 1}`);
             get(currentDayRef).then(snapshot => {
                 if (snapshot.exists()) {
                     set(nextDayRef, snapshot.val()).then(() => {
@@ -103,7 +107,7 @@ const interval = setInterval(() => {
         }
     
         // Push new average values to Day 7
-        set(ref(db, `user/${username}/LOCATION 1/History/Day 7`), {
+        set(ref(db, `user/${username}/${locationPath}/History/Day 7`), {
             humidity_avg: humidity_avg,
             mq135_avg: mq135_avg,
             temperature_avg: temperature_avg,

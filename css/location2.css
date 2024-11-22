@@ -1,0 +1,532 @@
+/* 1. Các thuộc tính cơ bản */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    padding-top: 80px; /* Add padding equal to the height of the header */
+    background-color: #f0f0f0;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+header {
+    position: fixed; /* Keep the header fixed at the top */
+    top: 0; /* Position it at the top */
+    left: 0; /* Align it to the left */
+    right: 0; /* Align it to the right */
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between; /* Space between left and right items */
+    align-items: center; /* Center items vertically */
+    transition: background-color 0.3s;
+    height: 50px;
+    z-index: 9999;
+    border-radius: 0 0 8px 8px; /* Apply border-radius to bottom left and bottom right corners */
+}
+.header-controls {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    margin-left: auto; /* Push controls to the right */
+}
+
+.home-button,
+.theme-toggle,
+.profile-icon {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 15px;
+    transition: color 0.3s;
+    font-weight: 600;
+}
+
+.back-link:hover,
+.profile-icon:hover,
+.home-button:hover,
+.theme-toggle:hover {
+    color: #535353;
+}
+
+.profile-container {
+    position: relative;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    display: none;
+    min-width: 150px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.profile-container:hover .profile-dropdown {
+    display: block;
+}
+
+.username {
+    color: #333;
+    margin-bottom: 10px;
+    transition: color 0.3s;
+}
+
+.logout-button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+
+.logout-button i {
+    margin-right: 5px;
+}
+
+.logout-button:hover {
+    background-color: #003d80;
+}
+
+.edit-button {
+    padding: 5px 10px; /* Add padding for better click area */
+    font-size: 14px; /* Set font size */
+    background-color: #0056b3; /* Background color */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background color transition */
+    margin-bottom: 10px;
+}
+
+.edit-button:hover {
+    background-color: #003d80; /* Darker background on hover */
+}
+
+.back-link{
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 15px; /* Space between index and other buttons */
+    margin-left: 0;
+}
+
+.profile-container:hover .profile-dropdown {
+    display: block;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+    padding: 20px;
+    justify-items: center;
+    align-items: start;
+}
+
+.main-widget {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    height: 90%;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.widget {
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+    box-sizing: border-box;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.widget p {
+    margin: 0;
+    font-size: 1em;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.widget span {
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+}
+.widget label {
+    display: inline-block; /* Aligns label and input on the same line */
+    width: 100px; /* Adjust width as needed */
+}
+
+.widget input[type="text"] {
+    display: inline-block; /* Aligns input next to label */
+    margin-left: 10px; /* Space between label and input */
+    text-align: center; /* Center the text inside the textbox */
+}
+
+h3 {
+    margin-bottom: 24px;
+    font-size: 20px;
+    color: #333;
+    width: 100%;
+    transition: color 0.3s;
+}
+
+canvas {
+    width: 100%;
+    height: 400px;
+}
+
+.chart-container {
+    position: relative;
+    width: 100%; /* Đảm bảo biểu đồ chiếm toàn bộ chiều rộng */
+    height: auto; /* Chiều cao tự động */
+}
+
+.chart-container h3 {
+    font-size: 24px; /* Kích thước chữ mặc định */
+    text-align: center; /* Căn giữa tiêu đề */
+}
+
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.chart-legend-item {
+    display: flex;
+    align-items: center;
+    margin: 0 10px 5px 0;
+}
+
+.chart-legend-color {
+    width: 12px;
+    height: 12px;
+    margin-right: 5px;
+    border-radius: 50%;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    background-color: #ccc;
+    border-radius: 34px;
+    transition: background-color 0.3s;
+    border: none;
+}
+
+.switch::before {
+    content: '';
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.switch.on {
+    background-color: #5fab61;
+}
+
+.switch.on::before {
+    transform: translateX(26px);
+}
+
+/* 2. Dark Mode */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+}
+
+body.dark-mode header {
+    background-color: #0056b3;
+}
+
+body.dark-mode .main-widget {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .widget {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-mode .widget p,
+body.dark-mode h3,
+body.dark-mode .username {
+    color: #f0f0f0;
+}
+
+body.dark-mode .profile-dropdown {
+    background-color: #333;
+    border-color: #555;
+}
+
+body.dark-mode .logout-button {
+    background-color: #007bff;
+}
+
+body.dark-mode .logout-button:hover {
+    background-color: #0056b3;
+}
+
+body.dark-mode .swal2-popup {
+    background-color: #333 !important;
+    color: #fff !important;
+}
+
+body.dark-mode .swal2-title,
+body.dark-mode .swal2-icon {
+    color: #fff !important;
+}
+
+/* 3. Responsive styles */
+@media screen and (max-width: 600px) {
+    .chart-legend {
+        font-size: 10px;
+    }
+    .chart-legend-color {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+    .widget {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    .main-widget {
+        display: flex;
+        flex-direction: column;
+    }
+    .chart-container {
+        height: 300px;
+        width: 100%;
+        overflow-x: auto;
+    }
+    .widget,
+    .main-widget > div {
+        width: 100%;
+    }
+    .current-conditions,
+    .device-controls {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    .current-conditions > div,
+    .device-controls > div {
+        width: 48%;
+        margin-bottom: 10px;
+    }
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+    .location-container {
+        width: 50%;
+        margin-bottom: 15px;
+    }
+    .location-container select {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .current-conditions > div,
+    .device-controls > div {
+        width: 100%;
+    }
+    .location-container {
+        width: 50%;
+        margin-bottom: 15px;
+    }
+    .location-container select {
+        width: 100%;
+    }
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .slider-container {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+        align-items: stretch; /* Stretch items to full width */
+    }
+
+    input[type="range"] {
+        margin-right: 0; /* Remove right margin */
+        margin-bottom: 10px; /* Add space below the slider */
+    }
+
+    .small-input {
+        width: 100%; /* Make the input take full width */
+        max-width: 100px; /* Limit max width for better appearance */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .small-input {
+        width: 80%; /* Make the input take 80% of the width */
+        max-width: none; /* Remove max width restriction */
+    }
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #1a1a1a; /* Dark background */
+    color: #f0f0f0; /* Light text color */
+}
+
+body.dark-mode .main-widget {
+    background-color: #2a2a2a; /* Darker background for main widget */
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); /* Subtle shadow */
+}
+
+body.dark-mode .widget {
+    background-color: #333; /* Dark background for widgets */
+    border: 1px solid #444; /* Dark border */
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode input[type="range"] {
+    background-color: #444; /* Dark background for inputs */
+    color: #f0f0f0; /* Light text color */
+    border: 1px solid #555; /* Dark border */
+}
+
+body.dark-mode input[type="text"]::placeholder {
+    color: #bbb; /* Placeholder text color */
+}
+
+body.dark-mode .small-input {
+    background-color: #444; /* Dark background for small input */
+    color: #f0f0f0; /* Light text color */
+    border: 1px solid #555; /* Dark border */
+}
+
+/* Adjust hover states if needed */
+body.dark-mode input[type="range"]:hover {
+    background-color: #555; /* Darker background on hover */
+}
+
+/* Add this to templates/css/location1.css */
+.widget {
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space between label and input */
+}
+
+.widget label {
+    margin-right: 10px; /* Space between label and input */
+    white-space: nowrap; /* Prevent label from wrapping */
+}
+
+.widget input[type="text"] {
+    flex: 1; /* Allow input to take available space */
+    max-width: 100px; /* Limit max width for better appearance */
+}
+
+.threshold-container {
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Center items vertically */
+}
+
+.threshold-container label {
+    margin-right: 10px; /* Space between label and input */
+}
+
+.edit-button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+
+.edit-button:hover {
+    background-color: #003d80;
+}
+
+/* Responsive cho màn hình nhỏ hơn 768px */
+@media screen and (max-width: 768px) {
+    .chart-container h3 {
+        font-size: 20px; /* Kích thước chữ nhỏ hơn */
+    }
+    .chart-legend {
+        font-size: 12px; /* Kích thước chữ cho legend */
+    }
+    .chart-container canvas {
+        max-width: 100%; /* Đảm bảo canvas không vượt quá chiều rộng */
+        height: auto; /* Chiều cao tự động */
+    }
+}
+
+/* Responsive cho màn hình nhỏ hơn 480px */
+@media screen and (max-width: 480px) {
+    .chart-container h3 {
+        font-size: 18px; /* Kích thước chữ nhỏ hơn nữa */
+    }
+    .chart-legend {
+        font-size: 10px; /* Kích thước chữ cho legend */
+    }
+}
+
+/* Điều chỉnh kích thước chữ cho các nhãn trục */
+.chart-container canvas {
+    max-width: 100%; /* Đảm bảo canvas không vượt quá chiều rộng */
+    height: auto; /* Chiều cao tự động */
+}
+
