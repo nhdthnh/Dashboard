@@ -100,7 +100,7 @@ header {
 .logout-button {
     padding: 5px 10px;
     font-size: 14px;
-    background-color: #0056b3;
+    background-color: #006fe7;
     color: white;
     border: none;
     border-radius: 4px;
@@ -123,7 +123,7 @@ header {
 .edit-button {
     padding: 5px 10px;
     font-size: 14px;
-    background-color: #0056b3;
+    background-color: #006fe7;
     color: white;
     border: none;
     border-radius: 4px;
@@ -137,6 +137,26 @@ header {
 }
 
 .edit-button:hover {
+    background-color: #003d80; /* Darker background on hover */
+}
+
+.admin-button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #006fe7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    margin-bottom: 10px;
+}
+
+.admin-button:hover {
     background-color: #003d80; /* Darker background on hover */
 }
 

@@ -82,7 +82,7 @@ header {
 .logout-button {
     padding: 5px 10px;
     font-size: 14px;
-    background-color: #0056b3;
+    background-color: #006fe7;
     color: white;
     border: none;
     border-radius: 4px;
@@ -105,7 +105,7 @@ header {
 .edit-button {
     padding: 5px 10px; /* Add padding for better click area */
     font-size: 14px; /* Set font size */
-    background-color: #0056b3; /* Background color */
+    background-color: #006fe7;
     color: white; /* Text color */
     border: none; /* Remove border */
     border-radius: 4px; /* Rounded corners */
@@ -115,6 +115,23 @@ header {
 }
 
 .edit-button:hover {
+    background-color: #003d80; /* Darker background on hover */
+}
+
+.admin-button {
+    padding: 5px 10px; /* Add padding for better click area */
+    font-size: 14px; /* Set font size */
+    background-color: #006fe7;
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background color transition */
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.admin-button:hover {
     background-color: #003d80; /* Darker background on hover */
 }
 
@@ -189,8 +206,19 @@ header {
 
 .widget input[type="text"] {
     display: inline-block; /* Aligns input next to label */
-    margin-left: 10px; /* Space between label and input */
+    margin-left: 4px; /* Space between label and input */
+    margin-right: 10px; /* Space between label and input */
     text-align: center; /* Center the text inside the textbox */
+    width: 100px; /* Đặt chiều rộng cho ô input */
+    padding: 10px; /* Thêm padding để ô lớn hơn */
+    border-radius: 8px; /* Bo góc cho ô input */
+    border: 1px solid #ccc; /* Đường viền cho ô input */
+    transition: border-color 0.3s; /* Hiệu ứng chuyển tiếp cho đường viền */
+    font-size: 16px;
+}
+
+.widget input[type="text"]:focus {
+    border-color: #007bff; /* Đổi màu đường viền khi ô được chọn */
 }
 
 h3 {
