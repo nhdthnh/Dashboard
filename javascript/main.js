@@ -283,3 +283,25 @@ document.getElementById('profileIcon').addEventListener('click', function() {
     const dropdown = document.getElementById('profileDropdown');
     dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
 });
+
+
+
+
+function checkLocations() {
+    const locations = ['LOCATION 1', 'LOCATION 2', 'LOCATION 3', 'LOCATION 4'];
+    locations.forEach(location => {
+        const locationRef = ref(db, `user/${username}/${location}`);
+        get(locationRef).then(snapshot => {
+            if (!snapshot.exists()) {
+                // Nếu không có dữ liệu, ẩn widget
+                document.getElementById(location.replace(" ", "").toLowerCase()).style.display = 'none';
+            } else {
+                // Nếu có dữ liệu, hiển thị widget
+                document.getElementById(location.replace(" ", "").toLowerCase()).style.display = 'block';
+            }
+        }).catch(error => {
+            console.error("Lỗi khi lấy dữ liệu LOCATION:", error);
+        });
+    });
+}
+window.onload = checkLocations;
