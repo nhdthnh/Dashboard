@@ -79,7 +79,7 @@ setInterval(() => {
             if (flameElement) {
                 flameElement.textContent = data.flame === 0 ? "YES" : "NO";
 
-                if (data.flame === 1) {
+                if (data.flame === 0) {
                     // Check if the alert has been shown in the last 10 seconds
                     const currentTime = Date.now();
                     if (!flameAlertTimeout || currentTime - flameAlertTimeout >= 10000) {

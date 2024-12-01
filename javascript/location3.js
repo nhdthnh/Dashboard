@@ -348,7 +348,7 @@ onValue(flameRef, (snapshot) => {
         if (flameElement) { // Check if the element exists
             flameElement.textContent = flame === 0 ? 'Yes' : 'No'; // Hiển thị 'Yes' nếu flame là 1, ngược lại hiển thị 'No'
             
-            if (flame === 1) {
+            if (flame === 0) {
                 // Show alert immediately if not already alerted
                 if (!flameAlerted) {
                     Swal.fire({
