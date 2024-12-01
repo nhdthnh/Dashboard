@@ -77,7 +77,7 @@ setInterval(() => {
                 mq135Element.textContent = `${data.mq135} PPM`;
             }
             if (flameElement) {
-                flameElement.textContent = data.flame === 1 ? "YES" : "NO";
+                flameElement.textContent = data.flame === 0 ? "YES" : "NO";
 
                 if (data.flame === 1) {
                     // Check if the alert has been shown in the last 10 seconds
