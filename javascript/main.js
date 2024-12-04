@@ -173,9 +173,9 @@ setInterval(() => {
                 mq135Element2.textContent = `${data.mq135} PPM`;
             }
             if (flameElement2) {
-                flameElement2.textContent = data.flame === 1 ? "YES" : "NO";  // Thay flame2 thành flame
+                flameElement2.textContent = data.flame === 0 ? "YES" : "NO";  // Thay flame2 thành flame
                 
-                if (data.flame === 1) {  // Giữ nguyên vì đã đúng
+                if (data.flame === 0) {  // Giữ nguyên vì đã đúng
                     // Check if the alert has been shown in the last 10 seconds
                     const currentTime = Date.now();
                     if (!flameAlertTimeout || currentTime - flameAlertTimeout >= 10000) {
