@@ -501,12 +501,36 @@ body.dark-mode input[type="range"]:hover {
 }
 
 .threshold-container {
-    display: flex; /* Use flexbox for alignment */
-    align-items: center; /* Center items vertically */
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack pairs vertically */
+    margin-top: 10px; /* Space between the threshold container and the widget */
 }
 
-.threshold-container label {
-    margin-right: 10px; /* Space between label and input */
+.threshold-pair {
+    display: flex; /* Use flexbox for each pair */
+    justify-content: space-between; /* Space between label and input */
+    align-items: center; /* Center items vertically */
+    margin-bottom: 5px; /* Reduce space between pairs */
+}
+
+.threshold-pair label {
+    margin-right: 5px; /* Space between label and input */
+    font-weight: bold; /* Bold labels */
+    flex: 0 0 40%; /* Fixed width for labels */
+}
+
+.threshold-pair input {
+    padding: 5px; /* Reduce padding inside the input */
+    border-radius: 4px; /* Rounded corners for inputs */
+    border: 1px solid #555; /* Dark border for inputs */
+    background-color: #e2e2e2; /* Dark background for inputs */
+    color: #444; /* Light text color */
+    transition: border-color 0.3s; /* Smooth transition for border color */
+    flex: 1; /* Allow inputs to take available space */
+}
+
+.threshold-pair input:focus {
+    border-color: #007bff; /* Change border color on focus */
 }
 
 .edit-button {
@@ -556,5 +580,19 @@ body.dark-mode input[type="range"]:hover {
 .chart-container canvas {
     max-width: 100%; /* Đảm bảo canvas không vượt quá chiều rộng */
     height: auto; /* Chiều cao tự động */
+}
+
+.time-control {
+    display: flex; /* Sử dụng flexbox để sắp xếp các ô nhập liệu */
+    gap: 0px; /* Khoảng cách giữa các ô nhập liệu */
+}
+
+.time-control input[type="text"] {
+    width: 15px; /* Chiều rộng cho mỗi ô nhập liệu */
+    height: 15px; /* Chiều cao cho mỗi ô nhập liệu */
+    text-align: center; /* Căn giữa văn bản trong ô nhập liệu */
+    border: 1px solid #ccc; /* Đường viền cho ô nhập liệu */
+    border-radius: 4px; /* Bo góc cho ô nhập liệu */
+    font-size: 13px; /* Kích thước chữ */
 }
 

@@ -60,29 +60,46 @@
             </div>
         </div>
     </header>
-    <div class="container">
-        
+    <div class="container">    
         <div class="main-widget">
             <h3>Current Conditions</h3>
             <div class="widget">
                 <p>Temperature:<br> <span id="temperature">Loading...</span></p>
                 <div class="threshold-container">
-                    <label for="tempThreshold">Threshold:</label>
-                    <input type="text" id="tempThreshold" value="50" />
+                    <div class="threshold-pair">
+                        <label for="tempThreshold">Max:</label>
+                        <input type="text" id="tempThreshold" value="50" />
+                    </div>
+                    <div class="threshold-pair">
+                        <label for="tempMinThreshold">Min:</label>
+                        <input type="text" id="tempMinThreshold" value="0" />
+                    </div>
                 </div>
             </div>
             <div class="widget">
                 <p>Humidity:<br> <span id="humidity">Loading...</span></p>
                 <div class="threshold-container">
-                    <label for="humidityThreshold">Threshold:</label>
-                    <input type="text" id="humidityThreshold" value="50" />
+                    <div class="threshold-pair">
+                        <label for="humidityThreshold">Max:</label>
+                        <input type="text" id="humidityThreshold" value="50" />
+                    </div>
+                    <div class="threshold-pair">
+                        <label for="humidityMinThreshold">Min:</label>
+                        <input type="text" id="humidityMinThreshold" value="0" />
+                    </div>
                 </div>
             </div>
             <div class="widget">
                 <p>Air Quality:<br> <span id="mq135">Loading...</span></p>
                 <div class="threshold-container">
-                    <label for="airQualityThreshold">Threshold:</label>
-                    <input type="text" id="airQualityThreshold" value="250" />
+                    <div class="threshold-pair">
+                        <label for="airQualityThreshold">Max:</label>
+                        <input type="text" id="airQualityThreshold" value="250" />
+                    </div>
+                    <div class="threshold-pair">
+                        <label for="airQualityMinThreshold">Min:</label>
+                        <input type="text" id="airQualityMinThreshold" value="0" />
+                    </div>
                 </div>
             </div>
             <div class="widget">
@@ -94,18 +111,34 @@
             <div class="widget" id="widget1" data-device-number="1">
                 <p>Device 1</p>
                 <button class="switch" id="device1"></button>
+                <div class="time-control">
+                    <input type="text" class="deviceHour" id="device1Hour"/>
+                    <input type="text" class="deviceMinute" id="device1Minute"/>
+                </div>
             </div>
             <div class="widget" id="widget2" data-device-number="2">
                 <p>Device 2</p>
                 <button class="switch" id="device2"></button>
+                <div class="time-control">
+                    <input type="text" class="deviceHour" id="device2Hour"/>
+                    <input type="text" class="deviceMinute" id="device2Minute" />
+                </div>
             </div>
             <div class="widget" id="widget3" data-device-number="3">
                 <p>Device 3</p>
                 <button class="switch" id="device3"></button>
+                <div class="time-control">
+                    <input type="text" class="deviceHour" id="device3Hour"/>
+                    <input type="text" class="deviceMinute" id="device3Minute"/>
+                </div>
             </div>
             <div class="widget" id="widget4" data-device-number="4">
                 <p>Device 4</p>
                 <button class="switch" id="device4"></button>
+                <div class="time-control">
+                    <input type="text" class="deviceHour" id="device4Hour"/>
+                    <input type="text" class="deviceMinute" id="device4Minute"/>
+                </div>
             </div>
         </div>
         <div class="main-widget">
@@ -113,8 +146,6 @@
                 <canvas id="myChart"></canvas>
             </div>
         </div>
-    
-        
         <div class="main-widget">
             <h3>Weekly Conditions</h3>
             <div class="chart-container">

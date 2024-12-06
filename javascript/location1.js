@@ -199,6 +199,14 @@ document.querySelectorAll('.widget').forEach(widget => {
                 swalToast.style.marginTop = '20px'; 
             }
         });
+
+        // Prevent click event from bubbling up when clicking on input fields
+        const inputs = widget.querySelectorAll('.time-control input');
+        inputs.forEach(input => {
+            input.addEventListener('click', function(event) {
+                event.stopPropagation(); // Prevent the click event from bubbling up to the widget
+            });
+        });
     }
 });
 
@@ -209,8 +217,10 @@ const mq135Ref = ref(db, `user/${username}/${LOCATION}/Sensor/mq135`);
 const flameRef = ref(db, `user/${username}/${LOCATION}/Sensor/flame`);
 const tempThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/temperatureThreshold`);
 const humidityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityThreshold`);
-const airQualityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityThreshold`);
-
+const airQualityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityMinThreshold`);
+const MintempThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/tempMinThreshold`);
+const MinhumidityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityMinThreshold`);
+const MinairQualityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityMinThreshold`);
 
 let latestTemperature = 0;
 let latestHumidity = 0;
@@ -561,6 +571,39 @@ document.getElementById('airQualityThreshold').addEventListener('change', functi
 });
 
 
+document.getElementById('tempMinThreshold').addEventListener('change', function() {
+    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
+    if (this.value === '' || newThreshold < 0 || newThreshold > 100) { // Check for null or empty
+        Swal.fire('Temperature must be between 0 and 100°C'); // Thông báo nếu vượt quá giới hạn
+        this.value = 50; // Set to average value
+        return;
+    }
+    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/tempMinThreshold`);
+    set(thresholdRef, newThreshold);
+});
+
+document.getElementById('humidityMinThreshold').addEventListener('change', function() {
+    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
+    if (this.value === '' || newThreshold < 0 || newThreshold > 100) { // Check for null or empty
+        Swal.fire('Humidity must be between 0 and 100%'); // Thông báo nếu vượt quá giới hạn
+        this.value = 50; // Set to average value
+        return;
+    }
+    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityMinThreshold`);
+    set(thresholdRef, newThreshold);
+});
+
+document.getElementById('airQualityMinThreshold').addEventListener('change', function() {
+    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
+    if (this.value === '' || newThreshold < 0 || newThreshold > 1000) { // Check for null or empty
+        Swal.fire('Air Quality must be between 0 and 1000 PPM'); // Thông báo nếu vượt quá giới hạn
+        this.value = 500; // Set to average value
+        return;
+    }
+    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityMinThreshold`);
+    set(thresholdRef, newThreshold);
+});
+
 function updateThresholds() {
     // Lấy giá trị ngưỡng nhiệt độ
     onValue(tempThresholdRef, (snapshot) => {
@@ -580,6 +623,21 @@ function updateThresholds() {
     onValue(airQualityThresholdRef, (snapshot) => {
         if (snapshot.exists()) {
             document.getElementById('airQualityThreshold').value = snapshot.val();
+        }
+    });
+    onValue(MintempThresholdRef, (snapshot) => {
+        if (snapshot.exists()) {
+            document.getElementById('tempMinThreshold').value = snapshot.val();
+        }
+    });
+    onValue(MintempThresholdRef, (snapshot) => {
+        if (snapshot.exists()) {
+            document.getElementById('humidityMinThreshold').value = snapshot.val();
+        }
+    });
+    onValue(MintempThresholdRef, (snapshot) => {
+        if (snapshot.exists()) {
+            document.getElementById('airQualityMinThreshold').value = snapshot.val();
         }
     });
 }
@@ -680,6 +738,107 @@ function checkAllSensorsAndAlert() {
 
 // Gọi lại hàm kiểm tra mỗi 10 giây
 setInterval(checkAllSensorsAndAlert, 10000);
+
+const deviceInputs = document.querySelectorAll('.time-control input'); // Select all device inputs
+let scheduledHour = null; // To store the scheduled hour
+let scheduledMinute = null; // To store the scheduled minute
+
+deviceInputs.forEach(input => {
+    input.addEventListener('change', function() {
+        let value = this.value.trim(); // Get input value and trim whitespace
+        let intValue = parseInt(value, 10); // Convert to integer
+
+        // Check for empty input or invalid values
+        if (value === '' || isNaN(intValue) || intValue < 0) {
+            Swal.fire('Invalid input! Setting value to 0.'); // Alert for invalid input
+            this.value = ""; // Reset to empty value
+        } else if (this.classList.contains('deviceHour') && intValue > 23) { // Check for hour inputs
+            Swal.fire('Hour must be between 0 and 23!'); // Alert for hour range
+            this.value = ""; // Reset to empty value
+        } else if (this.classList.contains('deviceMinute') && intValue > 59) { // Check for minute inputs
+            Swal.fire('Minute must be between 0 and 59!'); // Alert for minute range
+            this.value = ""; // Reset to empty value
+        } else {
+            // Add leading zero if value is less than 10
+            this.value = intValue < 10 ? `0${intValue}` : intValue;
+
+            // Update scheduled time based on input fields
+            if (this.classList.contains('deviceHour')) {
+                scheduledHour = intValue;
+            } else if (this.classList.contains('deviceMinute')) {
+                scheduledMinute = intValue;
+            }
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    let scheduledTimes = {
+        1: { hour: null, minute: null },
+        2: { hour: null, minute: null },
+        3: { hour: null, minute: null },
+        4: { hour: null, minute: null }
+    };
+
+    document.querySelectorAll('.widget').forEach(widget => {
+        const deviceNumber = widget.dataset.deviceNumber;
+
+        const hourInput = widget.querySelector('.deviceHour');
+        const minuteInput = widget.querySelector('.deviceMinute');
+
+        // Kiểm tra sự tồn tại của các input trước khi thêm sự kiện
+        if (hourInput) {
+            hourInput.addEventListener('change', function() {
+                scheduledTimes[deviceNumber].hour = parseInt(this.value, 10);
+            });
+        }
+
+        if (minuteInput) {
+            minuteInput.addEventListener('change', function() {
+                scheduledTimes[deviceNumber].minute = parseInt(this.value, 10);
+            });
+        }
+    });
+
+    function checkScheduledToggle() {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+
+        // Loop through all widgets to check their scheduled toggle
+        document.querySelectorAll('.widget').forEach(widget => {
+            const deviceNumber = widget.dataset.deviceNumber; // Get the device number from the widget's dataset
+            
+            // Kiểm tra xem deviceNumber có tồn tại trong scheduledTimes không
+            if (scheduledTimes[deviceNumber]) {
+                const scheduledHour = scheduledTimes[deviceNumber].hour;
+                const scheduledMinute = scheduledTimes[deviceNumber].minute;
+
+                console.log(`Scheduled Time for Device ${deviceNumber}: ${scheduledHour}:${scheduledMinute}`);
+                console.log(`Current Time: ${currentHour}:${currentMinute}`);
+
+                if (scheduledHour !== null && scheduledMinute !== null) {
+                    if (currentHour === scheduledHour && currentMinute === scheduledMinute) {
+                        // Toggle the switch state for the specific device
+                        const path = `user/${username}/${LOCATION}/Relay/device ${deviceNumber}`;
+                        const dbRef = ref(db, path);
+                        const button = widget.querySelector('.switch'); // Get the button within the current widget
+                        if (button) {
+                            button.classList.toggle('on'); // Toggle the button state
+                            const isOn = button.classList.contains('on');
+                            const stateValue = isOn ? 0 : 1; // Determine the new state value
+                            set(dbRef, stateValue); // Update the state in Firebase
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Gọi hàm checkScheduledToggle mỗi phút
+    setInterval(checkScheduledToggle, 10000);
+});
+
 
 
 
