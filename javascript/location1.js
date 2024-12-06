@@ -217,7 +217,7 @@ const mq135Ref = ref(db, `user/${username}/${LOCATION}/Sensor/mq135`);
 const flameRef = ref(db, `user/${username}/${LOCATION}/Sensor/flame`);
 const tempThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/temperatureThreshold`);
 const humidityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityThreshold`);
-const airQualityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityMinThreshold`);
+const airQualityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityThreshold`);
 const MintempThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/tempMinThreshold`);
 const MinhumidityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityMinThreshold`);
 const MinairQualityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityMinThreshold`);
@@ -630,12 +630,12 @@ function updateThresholds() {
             document.getElementById('tempMinThreshold').value = snapshot.val();
         }
     });
-    onValue(MintempThresholdRef, (snapshot) => {
+    onValue(MinhumidityThresholdRef, (snapshot) => {
         if (snapshot.exists()) {
             document.getElementById('humidityMinThreshold').value = snapshot.val();
         }
     });
-    onValue(MintempThresholdRef, (snapshot) => {
+    onValue(MinairQualityThresholdRef, (snapshot) => {
         if (snapshot.exists()) {
             document.getElementById('airQualityMinThreshold').value = snapshot.val();
         }
@@ -664,9 +664,12 @@ function checkAllSensorsAndAlert() {
             const temp = snapshot.val();
             document.getElementById('temperature').textContent = `${temp}°C`; // Cập nhật giao diện
             get(tempThresholdRef).then((thresholdSnapshot) => {
-                if (thresholdSnapshot.exists() && temp > thresholdSnapshot.val()) {
-                    tempExceeded = true;
-                    triggerAlertIfNeeded(); // Pass the parameter for logging
+                if (thresholdSnapshot.exists()) {
+                    const threshold = thresholdSnapshot.val();
+                    if (temp > threshold) {
+                        tempExceeded = true;
+                        triggerAlertIfNeeded('Temperature', temp, threshold); // Pass the parameter for logging
+                    }
                 }
             });
         }
@@ -678,9 +681,12 @@ function checkAllSensorsAndAlert() {
             const humidity = snapshot.val();
             document.getElementById('humidity').textContent = `${humidity}%`; // Cập nhật giao diện
             get(humidityThresholdRef).then((thresholdSnapshot) => {
-                if (thresholdSnapshot.exists() && humidity > thresholdSnapshot.val()) {
-                    humidityExceeded = true;
-                    triggerAlertIfNeeded(); // Pass the parameter for logging
+                if (thresholdSnapshot.exists()) {
+                    const threshold = thresholdSnapshot.val();
+                    if (humidity > threshold) {
+                        humidityExceeded = true;
+                        triggerAlertIfNeeded('Humidity', humidity, threshold); // Pass the parameter for logging
+                    }
                 }
             });
         }
@@ -692,9 +698,12 @@ function checkAllSensorsAndAlert() {
             const airQuality = snapshot.val();
             document.getElementById('mq135').textContent = `${airQuality} PPM`; // Cập nhật giao diện
             get(airQualityThresholdRef).then((thresholdSnapshot) => {
-                if (thresholdSnapshot.exists() && airQuality > thresholdSnapshot.val()) {
-                    airQualityExceeded = true;
-                    triggerAlertIfNeeded(); // Pass the parameter for logging
+                if (thresholdSnapshot.exists()) {
+                    const threshold = thresholdSnapshot.val();
+                    if (airQuality > threshold) {
+                        airQualityExceeded = true;
+                        triggerAlertIfNeeded('Air Quality', airQuality, threshold); // Pass the parameter for logging
+                    }
                 }
             });
         }
@@ -702,16 +711,21 @@ function checkAllSensorsAndAlert() {
 
     // Hàm hiển thị cảnh báo
     let alertShown = false; // Đảm bảo chỉ hiển thị 1 cảnh báo
-    function triggerAlertIfNeeded() {
+    function triggerAlertIfNeeded(sensorType, value, threshold) {
         if (!alertShown && (tempExceeded || humidityExceeded || airQualityExceeded)) {
             alertShown = true;
+            
+            // Tạo thông báo chi tiết với giá trị đã vượt ngưỡng
+            let alertMessage = `Condition warning!!!\n- ${sensorType} has exceeded the threshold.\n` +
+                               `Current Value: ${value}\nThreshold: ${threshold}`;
+
             Swal.fire({
                 icon: 'warning',
                 title: 'Warning!',
-                text: 'Condition warning!!!',
+                text: alertMessage,
             });
 
-            // Format the timestamp to a valid string
+            // Format timestamp
             const timestamp = new Date().toLocaleString('vi-VN', {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -722,8 +736,8 @@ function checkAllSensorsAndAlert() {
             }).replace(/\//g, '-'); // Replace slashes with dashes
 
             // Create a reference with the formatted timestamp
-            const logRef = ref(db, `user/${username}/LOG/${timestamp}`); 
-            set(logRef, `Over threshold`); // Push the log entry
+            const logRef = ref(db, `user/${username}/LOG/${timestamp}`);
+            set(logRef, `${sensorType} exceeded threshold. Current Value: ${value}, Threshold: ${threshold}`); // Log the alert message
         }
     }
 
@@ -738,6 +752,8 @@ function checkAllSensorsAndAlert() {
 
 // Gọi lại hàm kiểm tra mỗi 10 giây
 setInterval(checkAllSensorsAndAlert, 10000);
+
+
 
 const deviceInputs = document.querySelectorAll('.time-control input'); // Select all device inputs
 let scheduledHour = null; // To store the scheduled hour
