@@ -772,7 +772,7 @@ deviceInputs.forEach(input => {
     });
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     let scheduledTimes = {
         1: { hour: null, minute: null },
         2: { hour: null, minute: null },
@@ -786,48 +786,63 @@ document.addEventListener('DOMContentLoaded', function() {
         const hourInput = widget.querySelector('.deviceHour');
         const minuteInput = widget.querySelector('.deviceMinute');
 
-        // Kiểm tra sự tồn tại của các input trước khi thêm sự kiện
         if (hourInput) {
-            hourInput.addEventListener('change', function() {
+            hourInput.addEventListener('change', function () {
                 scheduledTimes[deviceNumber].hour = parseInt(this.value, 10);
             });
         }
 
         if (minuteInput) {
-            minuteInput.addEventListener('change', function() {
+            minuteInput.addEventListener('change', function () {
                 scheduledTimes[deviceNumber].minute = parseInt(this.value, 10);
             });
         }
     });
+
+    let isToggledRecently = false; // Flag to prevent toggling within 10 seconds
 
     function checkScheduledToggle() {
         const now = new Date();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
 
-        // Loop through all widgets to check their scheduled toggle
         document.querySelectorAll('.widget').forEach(widget => {
-            const deviceNumber = widget.dataset.deviceNumber; // Get the device number from the widget's dataset
-            
-            // Kiểm tra xem deviceNumber có tồn tại trong scheduledTimes không
+            const deviceNumber = widget.dataset.deviceNumber;
+
             if (scheduledTimes[deviceNumber]) {
                 const scheduledHour = scheduledTimes[deviceNumber].hour;
                 const scheduledMinute = scheduledTimes[deviceNumber].minute;
 
-                console.log(`Scheduled Time for Device ${deviceNumber}: ${scheduledHour}:${scheduledMinute}`);
-                console.log(`Current Time: ${currentHour}:${currentMinute}`);
-
                 if (scheduledHour !== null && scheduledMinute !== null) {
                     if (currentHour === scheduledHour && currentMinute === scheduledMinute) {
-                        // Toggle the switch state for the specific device
-                        const path = `user/${username}/${LOCATION}/Relay/device ${deviceNumber}`;
-                        const dbRef = ref(db, path);
-                        const button = widget.querySelector('.switch'); // Get the button within the current widget
-                        if (button) {
-                            button.classList.toggle('on'); // Toggle the button state
-                            const isOn = button.classList.contains('on');
-                            const stateValue = isOn ? 0 : 1; // Determine the new state value
-                            set(dbRef, stateValue); // Update the state in Firebase
+                        if (!isToggledRecently) {
+                            const path = `user/${username}/${LOCATION}/Relay/device ${deviceNumber}`;
+                            const dbRef = ref(db, path);
+                            const button = widget.querySelector('.switch');
+                            if (button) {
+                                button.classList.toggle('on');
+                                const isOn = button.classList.contains('on');
+                                const stateValue = isOn ? 0 : 1;
+                                set(dbRef, stateValue);
+
+                                isToggledRecently = true;
+                                setTimeout(() => {
+                                    isToggledRecently = false;
+                                }, 10000);
+
+                                // Clear the input values
+                                const hourInput = widget.querySelector('.deviceHour');
+                                const minuteInput = widget.querySelector('.deviceMinute');
+                                if (hourInput) hourInput.value = '';
+                                if (minuteInput) minuteInput.value = '';
+
+                                // Reset the scheduled times to null
+                                scheduledTimes[deviceNumber].hour = null;
+                                scheduledTimes[deviceNumber].minute = null;
+
+                                // Debug: In ra để kiểm tra reset
+                                console.log(`Scheduled time for device ${deviceNumber} reset to null.`);
+                            }
                         }
                     }
                 }
