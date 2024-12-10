@@ -657,7 +657,9 @@ function checkAllSensorsAndAlert() {
     let tempExceeded = false;
     let humidityExceeded = false;
     let airQualityExceeded = false;
-
+    let MintempExceeded = false;
+    let MinhumidityExceeded = false;
+    let MinairQualityExceeded = false;
     // Kiểm tra nhiệt độ
     onValue(temperatureRef, (snapshot) => {
         if (snapshot.exists()) {
@@ -668,6 +670,16 @@ function checkAllSensorsAndAlert() {
                     const threshold = thresholdSnapshot.val();
                     if (temp > threshold) {
                         tempExceeded = true;
+                        triggerAlertIfNeeded('Temperature', temp, threshold); // Pass the parameter for logging
+                    }
+                    
+                }
+            });
+            get(MintempThresholdRef).then((thresholdSnapshot) => {
+                if (thresholdSnapshot.exists()) {
+                    const threshold = thresholdSnapshot.val();
+                    if (temp < threshold) {
+                        MintempExceeded = true;
                         triggerAlertIfNeeded('Temperature', temp, threshold); // Pass the parameter for logging
                     }
                 }
@@ -689,6 +701,15 @@ function checkAllSensorsAndAlert() {
                     }
                 }
             });
+            get(MinhumidityThresholdRef).then((thresholdSnapshot) => {
+                if (thresholdSnapshot.exists()) {
+                    const threshold = thresholdSnapshot.val();
+                    if (humidity < threshold) {
+                        MinhumidityExceeded = true;
+                        triggerAlertIfNeeded('Humidity', humidity, threshold); // Pass the parameter for logging
+                    }
+                }
+            });
         }
     });
 
@@ -706,15 +727,23 @@ function checkAllSensorsAndAlert() {
                     }
                 }
             });
+            get(MinairQualityThresholdRef).then((thresholdSnapshot) => {
+                if (thresholdSnapshot.exists()) {
+                    const threshold = thresholdSnapshot.val();
+                    if (airQuality < threshold) {
+                        MinairQualityExceeded = true;
+                        triggerAlertIfNeeded('Air Quality', airQuality, threshold); // Pass the parameter for logging
+                    }
+                }
+            });
         }
     });
 
     // Hàm hiển thị cảnh báo
     let alertShown = false; // Đảm bảo chỉ hiển thị 1 cảnh báo
     function triggerAlertIfNeeded(sensorType, value, threshold) {
-        if (!alertShown && (tempExceeded || humidityExceeded || airQualityExceeded)) {
+        if (!alertShown && (tempExceeded || humidityExceeded || airQualityExceeded || MinairQualityExceeded || MinhumidityExceeded || MintempExceeded)) {
             alertShown = true;
-            
             // Tạo thông báo chi tiết với giá trị đã vượt ngưỡng
             let alertMessage = `Condition warning!!!\n- ${sensorType} has exceeded the threshold.\n` +
                                `Current Value: ${value}\nThreshold: ${threshold}`;
