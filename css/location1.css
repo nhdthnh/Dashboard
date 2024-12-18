@@ -174,6 +174,7 @@ header {
 }
 
 .widget {
+    position: relative; /* Thêm position relative cho widget */
     transition: all 0.3s ease;
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
@@ -597,3 +598,18 @@ body.dark-mode input[type="range"]:hover {
     font-size: 13px; /* Kích thước chữ */
 }
 
+.device-notes {
+    display: flex; /* Sử dụng flexbox để xếp các items thành một hàng */
+    gap: 10px; /* Khoảng cách giữa các input */
+    justify-content: center; /* Căn giữa các input */
+    margin-bottom: 10px; /* Khoảng cách với phần tử bên dưới */
+}
+
+.device-notes input {
+    font-size: 12px;
+    padding: 4px;
+    width: 120px; /* Giới hạn chiều rộng của mỗi input */
+    text-overflow: ellipsis; /* Hiển thị dấu ... khi text quá dài */
+    white-space: nowrap; /* Ngăn text xuống dòng */
+    overflow: hidden; /* Ẩn phần text bị tràn */
+}

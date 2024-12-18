@@ -766,7 +766,7 @@ function checkAllSensorsAndAlert() {
 
             // Create a reference with the formatted timestamp
             const logRef = ref(db, `user/${username}/LOG/${timestamp}`);
-            set(logRef, `${sensorType} exceeded threshold. Current Value: ${value}, Threshold: ${threshold}`); // Log the alert message
+            set(logRef, `LOCATION 1: ${sensorType} exceeded threshold. Current Value: ${value}, Threshold: ${threshold}`); // Log the alert message
         }
     }
 
@@ -901,6 +901,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+document.addEventListener("DOMContentLoaded", function () {
+    // Lấy danh sách tất cả các ô ngày tháng năm
+    const dateFields = document.querySelectorAll(".deviceDate");
 
+    // Lấy ngày tháng năm hiện tại
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}/${
+        (currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getFullYear()}`;
 
-
+    // Đặt giá trị mặc định
+    dateFields.forEach(field => {
+        field.value = formattedDate;
+    });
+});

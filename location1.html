@@ -15,14 +15,35 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .widget {
-            transition: background-color 0.3s; /* Smooth transition for background color */
+            transition: background-color 0.3s;
+            /* Smooth transition for background color */
             cursor: pointer;
         }
+
         .widget:hover {
-            background-color: rgba(132, 132, 132, 0.1); /* Change background color on hover */
+            background-color: rgba(132, 132, 132, 0.1);
+            /* Change background color on hover */
         }
+
         .edit-button {
-            white-space: nowrap; /* Prevent text from wrapping */
+            white-space: nowrap;
+            /* Prevent text from wrapping */
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .info-icon {
+            color: #888;
+            cursor: help;
+        }
+
+        .info-icon:hover {
+            color: #555;
         }
     </style>
 </head>
@@ -47,7 +68,8 @@
                 </div>
                 <div class="profile-dropdown" id="profileDropdown" style="display: none;">
                     <div class="username" id="dropdownUsername">Welcome, Username</div>
-                    <button class="edit-button" id="editButton" onclick="location.href='edit-profile.html'" style="white-space: nowrap;">
+                    <button class="edit-button" id="editButton" onclick="location.href='edit-profile.html'"
+                        style="white-space: nowrap;">
                         <i class="fas fa-user-edit" style="margin-right: 5px;"></i> Edit Profile
                     </button>
                     <button class="admin-button" id="adminButton" onclick="checkPassword()">
@@ -60,11 +82,14 @@
             </div>
         </div>
     </header>
-    <div class="container">    
+    <div class="container">
         <div class="main-widget">
             <h3>Current Conditions</h3>
             <div class="widget">
-                <p>Temperature:<br> <span id="temperature">Loading...</span></p>
+                <div class="widget-header">
+                    <p>Temperature</p>
+                </div>
+                <span id="temperature">Loading...</span>
                 <div class="threshold-container">
                     <div class="threshold-pair">
                         <label for="tempThreshold">Max:</label>
@@ -77,7 +102,10 @@
                 </div>
             </div>
             <div class="widget">
-                <p>Humidity:<br> <span id="humidity">Loading...</span></p>
+                <div class="widget-header">
+                    <p>Humidity</p>
+                </div>
+                <span id="humidity">Loading...</span>
                 <div class="threshold-container">
                     <div class="threshold-pair">
                         <label for="humidityThreshold">Max:</label>
@@ -90,7 +118,10 @@
                 </div>
             </div>
             <div class="widget">
-                <p>Air Quality:<br> <span id="mq135">Loading...</span></p>
+                <div class="widget-header">
+                    <p>Air Quality</p>
+                </div>
+                <span id="mq135">Loading...</span>
                 <div class="threshold-container">
                     <div class="threshold-pair">
                         <label for="airQualityThreshold">Max:</label>
@@ -108,19 +139,25 @@
         </div>
         <div class="main-widget">
             <h3>Device Controls</h3>
+            <div class="device-notes">
+                <input type="text" id="deviceNote1" placeholder="Device 1 description" />
+                <input type="text" id="deviceNote2" placeholder="Device 2 description" />
+                <input type="text" id="deviceNote3" placeholder="Device 3 description" />
+                <input type="text" id="deviceNote4" placeholder="Device 4 description" />
+            </div>
             <div class="widget" id="widget1" data-device-number="1">
                 <p>Device 1</p>
                 <button class="switch" id="device1"></button>
                 <div class="time-control">
-                    <input type="text" class="deviceHour" id="device1Hour"/>
-                    <input type="text" class="deviceMinute" id="device1Minute"/>
+                    <input type="text" class="deviceHour" id="device1Hour" />
+                    <input type="text" class="deviceMinute" id="device1Minute" />
                 </div>
             </div>
             <div class="widget" id="widget2" data-device-number="2">
                 <p>Device 2</p>
                 <button class="switch" id="device2"></button>
                 <div class="time-control">
-                    <input type="text" class="deviceHour" id="device2Hour"/>
+                    <input type="text" class="deviceHour" id="device2Hour" />
                     <input type="text" class="deviceMinute" id="device2Minute" />
                 </div>
             </div>
@@ -128,16 +165,16 @@
                 <p>Device 3</p>
                 <button class="switch" id="device3"></button>
                 <div class="time-control">
-                    <input type="text" class="deviceHour" id="device3Hour"/>
-                    <input type="text" class="deviceMinute" id="device3Minute"/>
+                    <input type="text" class="deviceHour" id="device3Hour" />
+                    <input type="text" class="deviceMinute" id="device3Minute" />
                 </div>
             </div>
             <div class="widget" id="widget4" data-device-number="4">
                 <p>Device 4</p>
                 <button class="switch" id="device4"></button>
                 <div class="time-control">
-                    <input type="text" class="deviceHour" id="device4Hour"/>
-                    <input type="text" class="deviceMinute" id="device4Minute"/>
+                    <input type="text" class="deviceHour" id="device4Hour" />
+                    <input type="text" class="deviceMinute" id="device4Minute" />
                 </div>
             </div>
         </div>
@@ -160,58 +197,76 @@
 <script type="module" src="javascript/get_push_data_1.js"></script>
 <script>
     function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth' // This makes the scroll smooth
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // This makes the scroll smooth
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('profileDropdown');
+        const profileIcon = document.getElementById('profileIcon');
+        if (!profileIcon.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.display = 'none'; // Close the dropdown
+        }
     });
-}
 
-document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('profileDropdown');
-    const profileIcon = document.getElementById('profileIcon');
-    if (!profileIcon.contains(event.target) && !dropdown.contains(event.target)) {
-        dropdown.style.display = 'none'; // Close the dropdown
+    // Thêm event listener cho profile icon
+    document.getElementById('profileIcon').addEventListener('click', function () {
+        const dropdown = document.getElementById('profileDropdown');
+        if (dropdown.style.display === 'none') {
+            dropdown.style.display = 'block';
+        } else {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    function checkPassword() {
+        Swal.fire({
+            title: 'Enter Password',
+            input: 'password',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            showLoaderOnConfirm: true,
+            preConfirm: (password) => {
+                if (password === 'admin') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Redirecting to admin page...',
+                        icon: 'success',
+                        timer: 1000, // Hiển thị thông báo trong 1 giây
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.href = 'admin.html'; // Redirect to admin page after 1 second
+                    });
+                } else {
+                    Swal.showValidationMessage('Incorrect password!'); // Show error message
+                }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        });
     }
-});
-
-// Thêm event listener cho profile icon
-document.getElementById('profileIcon').addEventListener('click', function() {
-    const dropdown = document.getElementById('profileDropdown');
-    if (dropdown.style.display === 'none') {
-        dropdown.style.display = 'block';
-    } else {
-        dropdown.style.display = 'none';
-    }
-});
-
-function checkPassword() {
-    Swal.fire({
-        title: 'Enter Password',
-        input: 'password',
-        inputAttributes: {
-            autocapitalize: 'off'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Submit',
-        showLoaderOnConfirm: true,
-        preConfirm: (password) => {
-            if (password === 'admin') {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Redirecting to admin page...',
-                    icon: 'success',
-                    timer: 1000, // Hiển thị thông báo trong 1 giây
-                    showConfirmButton: false
-                }).then(() => {
-                    location.href = 'admin.html'; // Redirect to admin page after 1 second
-                });
-            } else {
-                Swal.showValidationMessage('Incorrect password!'); // Show error message
+    document.addEventListener("DOMContentLoaded", () => {
+        // Load saved notes
+        for (let i = 1; i <= 4; i++) {
+            const note = localStorage.getItem(`deviceNote${i}`);
+            if (note) {
+                document.getElementById(`deviceNote${i}`).value = note;
             }
-        },
-        allowOutsideClick: () => !Swal.isLoading()
+        }
+
+        // Save notes on input change
+        document.querySelectorAll(".device-notes input").forEach(noteInput => {
+            noteInput.addEventListener("input", (e) => {
+                const id = e.target.id;
+                localStorage.setItem(id, e.target.value);
+            });
+        });
     });
-}
 
 </script>
+
 </html>
