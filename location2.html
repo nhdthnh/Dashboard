@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="./css/location1.css">
+    <link rel="stylesheet" href="./css/location2.css">
     <link rel="stylesheet" href="font/fontawesome-free-6.6.0-web/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -57,7 +57,7 @@
         </div>
         <div class="header-controls">
             <button id="homeButton" class="home-button" onclick="scrollToTop()">
-                <i class="fa-solid fa-chart-line" style="margin-right: 5px; font-weight:600px;"></i>Location 1
+                <i class="fa-solid fa-chart-line" style="margin-right: 5px; font-weight:600px;"></i>Location 2
             </button>
             <button id="themeToggle" class="theme-toggle">
                 <i class="fas fa-moon"></i>
@@ -193,8 +193,8 @@
     </div>
     <button id="scrollToTop" class="scroll-to-top">↑</button>
 </body>
-<script type="module" src="javascript/location1.js"></script>
-<script type="module" src="javascript/get_push_data_1.js"></script>
+<script type="module" src="javascript/location2.js"></script>
+<script type="module" src="javascript/get_push_data2.js"></script>
 <script>
     function scrollToTop() {
         window.scrollTo({
@@ -250,19 +250,19 @@
         });
     }
     document.addEventListener("DOMContentLoaded", () => {
-    // Load saved notes with "loc1_" prefix
+    // Load saved notes with "loc2_" prefix
     for (let i = 1; i <= 4; i++) {
-        const note = localStorage.getItem(`loc1_deviceNote${i}`);  // Thêm tiền tố "loc1_"
+        const note = localStorage.getItem(`loc2_deviceNote${i}`);  // Thêm tiền tố "loc2_"
         if (note) {
             document.getElementById(`deviceNote${i}`).value = note;
         }
     }
 
-        // Save notes with "loc1_" prefix
+        // Save notes with "loc2_" prefix
         document.querySelectorAll(".device-notes input").forEach(noteInput => {
             noteInput.addEventListener("input", (e) => {
                 const id = e.target.id;
-                localStorage.setItem(`loc1_${id}`, e.target.value);  // Thêm tiền tố "loc1_"
+                localStorage.setItem(`loc2_${id}`, e.target.value);  // Thêm tiền tố "loc2_"
             });
         });
     });
