@@ -22,7 +22,6 @@ with open(html_source_path, 'r', encoding='utf-8') as file:
 html_data = html_data.replace('Location 1', f'Location {location}')
 html_data = html_data.replace('location1', f'location{location}')
 html_data = html_data.replace('get_push_data_1', f'get_push_data{location}')
-html_data = html_data.replace("loc1",f'loc{location}')
 
 with open(html_destination_path, 'w', encoding='utf-8') as file:
     file.write(html_data)

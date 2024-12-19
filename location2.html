@@ -139,14 +139,8 @@
         </div>
         <div class="main-widget">
             <h3>Device Controls</h3>
-            <div class="device-notes">
-                <input type="text" id="deviceNote1" placeholder="Device 1 description" />
-                <input type="text" id="deviceNote2" placeholder="Device 2 description" />
-                <input type="text" id="deviceNote3" placeholder="Device 3 description" />
-                <input type="text" id="deviceNote4" placeholder="Device 4 description" />
-            </div>
             <div class="widget" id="widget1" data-device-number="1">
-                <p>Device 1</p>
+                <p>Pump</p>
                 <button class="switch" id="device1"></button>
                 <div class="time-control">
                     <input type="text" class="deviceHour" id="device1Hour" />
@@ -154,7 +148,7 @@
                 </div>
             </div>
             <div class="widget" id="widget2" data-device-number="2">
-                <p>Device 2</p>
+                <p>Exhaust Fan</p>
                 <button class="switch" id="device2"></button>
                 <div class="time-control">
                     <input type="text" class="deviceHour" id="device2Hour" />
@@ -162,7 +156,7 @@
                 </div>
             </div>
             <div class="widget" id="widget3" data-device-number="3">
-                <p>Device 3</p>
+                <p>Blower</p>
                 <button class="switch" id="device3"></button>
                 <div class="time-control">
                     <input type="text" class="deviceHour" id="device3Hour" />
@@ -170,7 +164,7 @@
                 </div>
             </div>
             <div class="widget" id="widget4" data-device-number="4">
-                <p>Device 4</p>
+                <p>Mist sprayer</p>
                 <button class="switch" id="device4"></button>
                 <div class="time-control">
                     <input type="text" class="deviceHour" id="device4Hour" />
@@ -249,23 +243,7 @@
             allowOutsideClick: () => !Swal.isLoading()
         });
     }
-    document.addEventListener("DOMContentLoaded", () => {
-    // Load saved notes with "loc2_" prefix
-    for (let i = 1; i <= 4; i++) {
-        const note = localStorage.getItem(`loc2_deviceNote${i}`);  // Thêm tiền tố "loc2_"
-        if (note) {
-            document.getElementById(`deviceNote${i}`).value = note;
-        }
-    }
 
-        // Save notes with "loc2_" prefix
-        document.querySelectorAll(".device-notes input").forEach(noteInput => {
-            noteInput.addEventListener("input", (e) => {
-                const id = e.target.id;
-                localStorage.setItem(`loc2_${id}`, e.target.value);  // Thêm tiền tố "loc2_"
-            });
-        });
-    });
 
 </script>
 

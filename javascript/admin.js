@@ -143,7 +143,10 @@ document.getElementById('addLocationForm').addEventListener('submit', async (e) 
             Threshold: {
                 "airQualityThreshold": 0,
                 "humidityThreshold": 0,
-                "temperatureThreshold": 0
+                "temperatureThreshold": 0,
+                "airQualityMinThreshold": 0,
+                "humidityMinThreshold": 0,
+                "temperatureMinThreshold": 0
             },
             status: 0
         };
