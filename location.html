@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/location.css">
+    <link rel="stylesheet" href="font/fontawesome-free-6.6.0-web/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .widget {
+            transition: background-color 0.3s;
+            /* Smooth transition for background color */
+            cursor: pointer;
+        }
+
+        .widget:hover {
+            background-color: rgba(132, 132, 132, 0.1);
+            /* Change background color on hover */
+        }
+
+        .edit-button {
+            white-space: nowrap;
+            /* Prevent text from wrapping */
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .info-icon {
+            color: #888;
+            cursor: help;
+        }
+
+        .info-icon:hover {
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="index">
+            <a href="main.html" class="back-link">
+                <i class="fa-solid fa-backward"></i>
+            </a>
+        </div>
+        <div class="header-controls">
+            <button id="homeButton" class="home-button" onclick="scrollToTop()">
+                <i class="fa-solid fa-chart-line" style="margin-right: 5px; font-weight:600px;"></i>Location 
+            </button>
+            <button id="themeToggle" class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="profile-container">
+                <div class="profile-icon" id="profileIcon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-dropdown" id="profileDropdown" style="display: none;">
+                    <div class="username" id="dropdownUsername">Welcome, Username</div>
+                    <button class="edit-button" id="editButton" onclick="location.href='edit-profile.html'"
+                        style="white-space: nowrap;">
+                        <i class="fas fa-user-edit" style="margin-right: 5px;"></i> Edit Profile
+                    </button>
+                    <button class="admin-button" id="adminButton" onclick="checkPassword()">
+                        <i class="fa-solid fa-gear"></i> Admin
+                    </button>
+                    <button class="logout-button" id="logoutButton" onclick="location.href='login.html'">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="main-widget">
+            <h3>Current Conditions</h3>
+            <div class="widget">
+                <div class="widget-header">
+                    <p>Temperature</p>
+                </div>
+                <span id="temperature">Loading...</span>
+                <div class="threshold-container">
+                    <div class="threshold-pair">
+                        <label for="tempThreshold">Max:</label>
+                        <input type="text" id="tempThreshold" value="50" />
+                    </div>
+                    <div class="threshold-pair">
+                        <label for="tempMinThreshold">Min:</label>
+                        <input type="text" id="tempMinThreshold" value="0" />
+                    </div>
+                </div>
+            </div>
+            <div class="widget">
+                <div class="widget-header">
+                    <p>Humidity</p>
+                </div>
+                <span id="humidity">Loading...</span>
+                <div class="threshold-container">
+                    <div class="threshold-pair">
+                        <label for="humidityThreshold">Max:</label>
+                        <input type="text" id="humidityThreshold" value="50" />
+                    </div>
+                    <div class="threshold-pair">
+                        <label for="humidityMinThreshold">Min:</label>
+                        <input type="text" id="humidityMinThreshold" value="0" />
+                    </div>
+                </div>
+            </div>
+            <div class="widget">
+                <div class="widget-header">
+                    <p>Air Quality</p>
+                </div>
+                <span id="mq135">Loading...</span>
+                <div class="threshold-container">
+                    <div class="threshold-pair">
+                        <label for="airQualityThreshold">Max:</label>
+                        <input type="text" id="airQualityThreshold" value="250" />
+                    </div>
+                    <div class="threshold-pair">
+                        <label for="airQualityMinThreshold">Min:</label>
+                        <input type="text" id="airQualityMinThreshold" value="0" />
+                    </div>
+                </div>
+            </div>
+            <div class="widget">
+                <p>Flame:<br> <span id="flame">Loading...</span></p>
+            </div>
+        </div>
+        <div class="main-widget">
+            <h3>Device Controls</h3>
+            <div class="widget" id="widget1" data-device-number="1">
+                <p>Pump</p>
+                <button class="switch" id="device1"></button>
+                <div class="time-control">
+                    <input type="text" class="deviceHour" id="device1Hour" />
+                    <input type="text" class="deviceMinute" id="device1Minute" />
+                </div>
+            </div>
+            <div class="widget" id="widget2" data-device-number="2">
+                <p>Exhaust Fan</p>
+                <button class="switch" id="device2"></button>
+                <div class="time-control">
+                    <input type="text" class="deviceHour" id="device2Hour" />
+                    <input type="text" class="deviceMinute" id="device2Minute" />
+                </div>
+            </div>
+            <div class="widget" id="widget3" data-device-number="3">
+                <p>Blower</p>
+                <button class="switch" id="device3"></button>
+                <div class="time-control">
+                    <input type="text" class="deviceHour" id="device3Hour" />
+                    <input type="text" class="deviceMinute" id="device3Minute" />
+                </div>
+            </div>
+            <div class="widget" id="widget4" data-device-number="4">
+                <p>Mist sprayer</p>
+                <button class="switch" id="device4"></button>
+                <div class="time-control">
+                    <input type="text" class="deviceHour" id="device4Hour" />
+                    <input type="text" class="deviceMinute" id="device4Minute" />
+                </div>
+            </div>
+        </div>
+        <div class="main-widget">
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+        <div class="main-widget">
+            <h3>Weekly Conditions</h3>
+            <div class="chart-container">
+                <canvas id="weeklyChart" class="chartjs-render-monitor"></canvas>
+            </div>
+        </div>
+    </div>
+    </div>
+    <button id="scrollToTop" class="scroll-to-top">↑</button>
+</body>
+<script type="module" src="javascript/location.js"></script>
+<script type="module" src="javascript/get_push_data.js"></script>
+<script>
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // This makes the scroll smooth
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('profileDropdown');
+        const profileIcon = document.getElementById('profileIcon');
+        if (!profileIcon.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.display = 'none'; // Close the dropdown
+        }
+    });
+
+    // Thêm event listener cho profile icon
+    document.getElementById('profileIcon').addEventListener('click', function () {
+        const dropdown = document.getElementById('profileDropdown');
+        if (dropdown.style.display === 'none') {
+            dropdown.style.display = 'block';
+        } else {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    function checkPassword() {
+        Swal.fire({
+            title: 'Enter Password',
+            input: 'password',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            showLoaderOnConfirm: true,
+            preConfirm: (password) => {
+                if (password === 'admin') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Redirecting to admin page...',
+                        icon: 'success',
+                        timer: 1000, // Hiển thị thông báo trong 1 giây
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.href = 'admin.html'; // Redirect to admin page after 1 second
+                    });
+                } else {
+                    Swal.showValidationMessage('Incorrect password!'); // Show error message
+                }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        });
+    }
+
+
+</script>
+
+</html>
