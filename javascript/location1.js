@@ -366,9 +366,9 @@ onValue(flameRef, (snapshot) => {
 
         if (flameElement) {
             // Cập nhật giao diện để hiển thị trạng thái lửa
-            flameElement.textContent = flame === 0 ? 'Yes' : 'No';
+            flameElement.textContent = flame === 1 ? 'Yes' : 'No';
 
-            if (flame === 0) {
+            if (flame === 1) {
                 // Phát hiện lửa
                 set(device1Ref, 0)
                 if (!flameAlerted) {
@@ -403,7 +403,7 @@ onValue(flameRef, (snapshot) => {
                     onValue(flameRef, (snapshot) => {
                         if (snapshot.exists()) {
                             const newFlame = snapshot.val();
-                            if (newFlame === 0) {
+                            if (newflame === 1) {
                                 Swal.fire({
                                     icon: 'warning',
                                     title: 'Warning!',

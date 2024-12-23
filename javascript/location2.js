@@ -356,9 +356,9 @@ onValue(flameRef, (snapshot) => {
         const flameElement = document.getElementById('flame'); // Get the flame element
 
         if (flameElement) { // Check if the element exists
-            flameElement.textContent = flame === 0? 'Yes' : 'No'; // Hiển thị 'Yes' nếu flame là 1, ngược lại hiển thị 'No'
+            flameElement.textContent = flame === 1? 'Yes' : 'No'; // Hiển thị 'Yes' nếu flame là 1, ngược lại hiển thị 'No'
             
-            if (flame === 0) {
+            if (flame === 1) {
                 // Show alert immediately if not already alerted
                 if (!flameAlerted) {
                     Swal.fire({
