@@ -551,71 +551,185 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Thêm sự kiện lắng nghe cho các trường ngưỡng
 document.getElementById('tempThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 100) { // Check for null or empty
-        Swal.fire('Temperature must be between 0 and 100°C'); // Thông báo nếu vượt quá giới hạn
-        this.value = 50; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 0 || newThreshold > 50) {
+        Swal.fire('Temperature must be between 0 and 50°C');
+        this.value = 50;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/temperatureThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the temperature threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/temperatureThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Temperature threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 50;
+        }
+    });
 });
 
 document.getElementById('humidityThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 100) { // Check for null or empty
-        Swal.fire('Humidity must be between 0 and 100%'); // Thông báo nếu vượt quá giới hạn
-        this.value = 50; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 20 || newThreshold > 70) {
+        Swal.fire('Humidity must be between 20 and 70%');
+        this.value = 50;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the humidity threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Humidity threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 50;
+        }
+    });
 });
 
 document.getElementById('airQualityThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 1000) { // Check for null or empty
-        Swal.fire('Air Quality must be between 0 and 1000 PPM'); // Thông báo nếu vượt quá giới hạn
-        this.value = 500; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 0 || newThreshold > 1000) {
+        Swal.fire('Air Quality must be between 0 and 1000 PPM');
+        this.value = 500;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the air quality threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Air quality threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 500;
+        }
+    });
 });
 
-
 document.getElementById('tempMinThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 100) { // Check for null or empty
-        Swal.fire('Temperature must be between 0 and 100°C'); // Thông báo nếu vượt quá giới hạn
-        this.value = 50; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 0 || newThreshold > 50) {
+        Swal.fire('Temperature must be between 0 and 50°C');
+        this.value = 50;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/tempMinThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the minimum temperature threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/tempMinThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Minimum temperature threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 50;
+        }
+    });
 });
 
 document.getElementById('humidityMinThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 100) { // Check for null or empty
-        Swal.fire('Humidity must be between 0 and 100%'); // Thông báo nếu vượt quá giới hạn
-        this.value = 50; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 20 || newThreshold > 70) {
+        Swal.fire('Humidity must be between 20 and 70%');
+        this.value = 50;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityMinThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the minimum humidity threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityMinThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Minimum humidity threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 50;
+        }
+    });
 });
 
 document.getElementById('airQualityMinThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 1000) { // Check for null or empty
-        Swal.fire('Air Quality must be between 0 and 1000 PPM'); // Thông báo nếu vượt quá giới hạn
-        this.value = 500; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 0 || newThreshold > 1000) {
+        Swal.fire('Air Quality must be between 0 and 1000 PPM');
+        this.value = 500;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityMinThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the minimum air quality threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityMinThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Minimum air quality threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 500;
+        }
+    });
 });
+
 
 function updateThresholds() {
     // Lấy giá trị ngưỡng nhiệt độ
