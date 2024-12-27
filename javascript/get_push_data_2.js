@@ -18,6 +18,24 @@ const LOCATION = 'LOCATION 2'; // Replace with actual location if dynamic
 
 const username = localStorage.getItem('loggedInUser');
 console.log(username);
+// Reference to the Firebase database path for each data type
+const temperatureRef = ref(db, `user/${username}/${LOCATION}/Sensor/temperature`);
+const humidityRef = ref(db, `user/${username}/${LOCATION}/Sensor/humidity`);
+const mq135Ref = ref(db, `user/${username}/${LOCATION}/Sensor/mq135`);
+const flameRef = ref(db, `user/${username}/${LOCATION}/Sensor/flame`);
+const tempThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/temperatureThreshold`);
+const humidityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityThreshold`);
+const airQualityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityThreshold`);
+const MintempThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/tempMinThreshold`);
+const MinhumidityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityMinThreshold`);
+const MinairQualityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityMinThreshold`);
+const device1Ref = ref(db, `user/${username}/${LOCATION}/Relay/device 1`);
+const device2Ref = ref(db, `user/${username}/${LOCATION}/Relay/device 2`);
+const device3Ref = ref(db, `user/${username}/${LOCATION}/Relay/device 3`);
+const device4Ref = ref(db, `user/${username}/${LOCATION}/Relay/device 4`);
+
+
+
 if (username) {
     // Hiển thị username trong dropdown
     document.getElementById('dropdownUsername').textContent = `Welcome, ${username}`;
@@ -210,17 +228,7 @@ document.querySelectorAll('.widget').forEach(widget => {
     }
 });
 
-// Reference to the Firebase database path for each data type
-const temperatureRef = ref(db, `user/${username}/${LOCATION}/Sensor/temperature`);
-const humidityRef = ref(db, `user/${username}/${LOCATION}/Sensor/humidity`);
-const mq135Ref = ref(db, `user/${username}/${LOCATION}/Sensor/mq135`);
-const flameRef = ref(db, `user/${username}/${LOCATION}/Sensor/flame`);
-const tempThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/temperatureThreshold`);
-const humidityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityThreshold`);
-const airQualityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityThreshold`);
-const MintempThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/tempMinThreshold`);
-const MinhumidityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityMinThreshold`);
-const MinairQualityThresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityMinThreshold`);
+
 
 let latestTemperature = 0;
 let latestHumidity = 0;
@@ -289,7 +297,6 @@ setInterval(() => {
     });
 }, updateInterval);
 
-let tempThreshold; // Khai báo tempThreshold ở cấp độ cao hơn
 
 onValue(temperatureRef, (snapshot) => {
     if (snapshot.exists()) {
@@ -350,49 +357,53 @@ document.addEventListener('DOMContentLoaded', function() {
 let flameTimer; // Declare a timer variable
 let flameAlerted = false; // Track if the alert has already been shown
 
+
 onValue(flameRef, (snapshot) => {
     if (snapshot.exists()) {
         const flame = snapshot.val(); // Lấy giá trị flame từ snapshot
         const flameElement = document.getElementById('flame'); // Get the flame element
+        const relay1Switch = document.getElementById('device1'); // Nút switch tương ứng với relay 1
 
-        if (flameElement) { // Check if the element exists
-            flameElement.textContent = flame === 0? 'Yes' : 'No'; // Hiển thị 'Yes' nếu flame là 1, ngược lại hiển thị 'No'
-            
-            if (flame === 0) {
-                // Show alert immediately if not already alerted
+        if (flameElement) {
+            // Cập nhật giao diện để hiển thị trạng thái lửa
+            flameElement.textContent = flame === 1 ? 'Yes' : 'No';
+
+            if (flame === 1) {
+                // Phát hiện lửa
+                set(device1Ref, 0)
                 if (!flameAlerted) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Warning!',
                         text: 'Flame detected!',
                     });
-                    flameAlerted = true; // Set the flag to true
 
-                    // Log the flame detection
+                    flameAlerted = true; // Đặt cờ báo hiệu
+
+                    // Log sự kiện phát hiện lửa
                     const timestamp = new Date().toLocaleString('vi-VN', {
                         hour: '2-digit',
                         minute: '2-digit',
-                        second: '2-digit', // Thêm giây vào định dạng
+                        second: '2-digit',
                         day: '2-digit',
                         month: '2-digit',
-                        year: 'numeric'
-                    }).replace(/\//g, '-'); // Replace slashes with dashes
+                        year: 'numeric',
+                    }).replace(/\//g, '-'); // Định dạng thời gian
 
-                    // Create a reference with the formatted timestamp
-                    const logRef = ref(db, `user/${username}/LOG/${timestamp}`); 
-                    set(logRef, `Flame detected LOCATION 2`); // Push the log entry
+                    const logRef = ref(db, `user/${username}/LOG/${timestamp}`);
+                    set(logRef, `Flame detected at LOCATION 2`); // Ghi log vào Firebase
                 }
 
-                // Clear any existing timer
+                // Tự động bật switch tương ứng với relay 1
+
+
+                // Thiết lập timer để kiểm tra trạng thái lửa sau 20 giây
                 clearTimeout(flameTimer);
-                
-                // Set a new timer for 20 seconds
                 flameTimer = setTimeout(() => {
-                    // Check the flame value again after 20 seconds
                     onValue(flameRef, (snapshot) => {
                         if (snapshot.exists()) {
                             const newFlame = snapshot.val();
-                            if (newFlame === 1) {
+                            if (newflame === 1) {
                                 Swal.fire({
                                     icon: 'warning',
                                     title: 'Warning!',
@@ -401,17 +412,19 @@ onValue(flameRef, (snapshot) => {
                             }
                         }
                     });
-                }, 20000); // 20 seconds
+                }, 20000); // 20 giây
             } else {
-                // If flame is not 1, clear the timer and reset the alert flag
+                // Không phát hiện lửa
                 clearTimeout(flameTimer);
-                flameAlerted = false; // Reset the alert flag
+                flameAlerted = false; // Đặt lại cờ báo hiệu
+                
             }
         } else {
             console.error("Element with ID 'flame' not found in the DOM.");
         }
     }
 });
+
 
 let lastAlertTime = { temperature: 0, humidity: 0, airQuality: 0 }; // Track last alert time for each parameter
 const alertInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -538,71 +551,185 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Thêm sự kiện lắng nghe cho các trường ngưỡng
 document.getElementById('tempThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 100) { // Check for null or empty
-        Swal.fire('Temperature must be between 0 and 100°C'); // Thông báo nếu vượt quá giới hạn
-        this.value = 50; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 0 || newThreshold > 50) {
+        Swal.fire('Temperature must be between 0 and 50°C');
+        this.value = 50;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/temperatureThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the temperature threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/temperatureThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Temperature threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 50;
+        }
+    });
 });
 
 document.getElementById('humidityThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 100) { // Check for null or empty
-        Swal.fire('Humidity must be between 0 and 100%'); // Thông báo nếu vượt quá giới hạn
-        this.value = 50; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 20 || newThreshold > 70) {
+        Swal.fire('Humidity must be between 20 and 70%');
+        this.value = 50;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the humidity threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Humidity threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 50;
+        }
+    });
 });
 
 document.getElementById('airQualityThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 1000) { // Check for null or empty
-        Swal.fire('Air Quality must be between 0 and 1000 PPM'); // Thông báo nếu vượt quá giới hạn
-        this.value = 500; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 0 || newThreshold > 1000) {
+        Swal.fire('Air Quality must be between 0 and 1000 PPM');
+        this.value = 500;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the air quality threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Air quality threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 500;
+        }
+    });
 });
 
-
 document.getElementById('tempMinThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 100) { // Check for null or empty
-        Swal.fire('Temperature must be between 0 and 100°C'); // Thông báo nếu vượt quá giới hạn
-        this.value = 50; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 0 || newThreshold > 50) {
+        Swal.fire('Temperature must be between 0 and 50°C');
+        this.value = 50;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/tempMinThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the minimum temperature threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/tempMinThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Minimum temperature threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 50;
+        }
+    });
 });
 
 document.getElementById('humidityMinThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 100) { // Check for null or empty
-        Swal.fire('Humidity must be between 0 and 100%'); // Thông báo nếu vượt quá giới hạn
-        this.value = 50; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 20 || newThreshold > 70) {
+        Swal.fire('Humidity must be between 20 and 70%');
+        this.value = 50;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityMinThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the minimum humidity threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/humidityMinThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Minimum humidity threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 50;
+        }
+    });
 });
 
 document.getElementById('airQualityMinThreshold').addEventListener('change', function() {
-    const newThreshold = parseInt(this.value, 10); // Ép kiểu sang số nguyên
-    if (this.value === '' || newThreshold < 0 || newThreshold > 1000) { // Check for null or empty
-        Swal.fire('Air Quality must be between 0 and 1000 PPM'); // Thông báo nếu vượt quá giới hạn
-        this.value = 500; // Set to average value
+    const newThreshold = parseInt(this.value, 10);
+    if (this.value === '' || newThreshold < 0 || newThreshold > 1000) {
+        Swal.fire('Air Quality must be between 0 and 1000 PPM');
+        this.value = 500;
         return;
     }
-    const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityMinThreshold`);
-    set(thresholdRef, newThreshold);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to update the minimum air quality threshold to ${newThreshold}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const thresholdRef = ref(db, `user/${username}/${LOCATION}/Threshold/airQualityMinThreshold`);
+            set(thresholdRef, newThreshold)
+                .then(() => {
+                    Swal.fire('Updated!', 'Minimum air quality threshold has been updated.', 'success');
+                })
+                .catch((error) => {
+                    Swal.fire('Error!', `Failed to update: ${error.message}`, 'error');
+                });
+        } else {
+            this.value = 500;
+        }
+    });
 });
+
 
 function updateThresholds() {
     // Lấy giá trị ngưỡng nhiệt độ
@@ -671,6 +798,7 @@ function checkAllSensorsAndAlert() {
                     if (temp > threshold) {
                         tempExceeded = true;
                         triggerAlertIfNeeded('Temperature', temp, threshold); // Pass the parameter for logging
+                        set(device3Ref, 0)
                     }
                     
                 }
@@ -698,8 +826,9 @@ function checkAllSensorsAndAlert() {
                     if (humidity > threshold) {
                         humidityExceeded = true;
                         triggerAlertIfNeeded('Humidity', humidity, threshold); // Pass the parameter for logging
+                        set(device2Ref, 0)
                     }
-                }
+                }     
             });
             get(MinhumidityThresholdRef).then((thresholdSnapshot) => {
                 if (thresholdSnapshot.exists()) {
@@ -707,6 +836,7 @@ function checkAllSensorsAndAlert() {
                     if (humidity < threshold) {
                         MinhumidityExceeded = true;
                         triggerAlertIfNeeded('Humidity', humidity, threshold); // Pass the parameter for logging
+                        set(device4Ref, 0)
                     }
                 }
             });
@@ -724,18 +854,19 @@ function checkAllSensorsAndAlert() {
                     if (airQuality > threshold) {
                         airQualityExceeded = true;
                         triggerAlertIfNeeded('Air Quality', airQuality, threshold); // Pass the parameter for logging
+                        set(device2Ref, 0)
                     }
                 }
             });
-            get(MinairQualityThresholdRef).then((thresholdSnapshot) => {
-                if (thresholdSnapshot.exists()) {
-                    const threshold = thresholdSnapshot.val();
-                    if (airQuality < threshold) {
-                        MinairQualityExceeded = true;
-                        triggerAlertIfNeeded('Air Quality', airQuality, threshold); // Pass the parameter for logging
-                    }
-                }
-            });
+            // get(MinairQualityThresholdRef).then((thresholdSnapshot) => {
+            //     if (thresholdSnapshot.exists()) {
+            //         const threshold = thresholdSnapshot.val();
+            //         if (airQuality < threshold) {
+            //             MinairQualityExceeded = true;
+            //             triggerAlertIfNeeded('Air Quality', airQuality, threshold); // Pass the parameter for logging
+            //         }
+            //     }
+            // });
         }
     });
 
@@ -915,3 +1046,4 @@ document.addEventListener("DOMContentLoaded", function () {
         field.value = formattedDate;
     });
 });
+

@@ -1,7 +1,7 @@
 import shutil
 
 # Định nghĩa biến toàn cục cho location
-location =''
+location ='2'
 
 # Đường dẫn tới các file nguồn và file đích
 html_source_path = 'location1.html'
