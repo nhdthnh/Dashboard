@@ -582,7 +582,7 @@ document.getElementById('tempThreshold').addEventListener('change', function() {
 
 document.getElementById('humidityThreshold').addEventListener('change', function() {
     const newThreshold = parseInt(this.value, 10);
-    if (this.value === '' || newThreshold < 20 || newThreshold > 70) {
+    if (this.value === '' || newThreshold < 20 || newThreshold > 100) {
         Swal.fire('Humidity must be between 20 and 70%');
         this.value = 50;
         return;
