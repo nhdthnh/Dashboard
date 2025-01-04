@@ -391,7 +391,7 @@ onValue(flameRef, (snapshot) => {
                     }).replace(/\//g, '-'); // Định dạng thời gian
 
                     const logRef = ref(db, `user/${username}/LOG/${timestamp}`);
-                    set(logRef, `Flame detected at LOCATION 1`); // Ghi log vào Firebase
+                    set(logRef, `Flame detected at LOCATION 2`); // Ghi log vào Firebase
                 }
 
                 // Tự động bật switch tương ứng với relay 1
@@ -582,7 +582,7 @@ document.getElementById('tempThreshold').addEventListener('change', function() {
 
 document.getElementById('humidityThreshold').addEventListener('change', function() {
     const newThreshold = parseInt(this.value, 10);
-    if (this.value === '' || newThreshold < 20 || newThreshold > 70) {
+    if (this.value === '' || newThreshold < 20 || newThreshold > 100) {
         Swal.fire('Humidity must be between 20 and 70%');
         this.value = 50;
         return;
@@ -897,7 +897,7 @@ function checkAllSensorsAndAlert() {
 
             // Create a reference with the formatted timestamp
             const logRef = ref(db, `user/${username}/LOG/${timestamp}`);
-            set(logRef, `LOCATION 1: ${sensorType} exceeded threshold. Current Value: ${value}, Threshold: ${threshold}`); // Log the alert message
+            set(logRef, `LOCATION 2: ${sensorType} exceeded threshold. Current Value: ${value}, Threshold: ${threshold}`); // Log the alert message
         }
     }
 
